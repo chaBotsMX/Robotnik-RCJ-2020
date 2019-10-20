@@ -192,7 +192,7 @@ void loop() {
   int kp=255;
   float valor=(vu/180*kp);
   
-  setMotor(a-valor,b+valor,c-valor);
+  setMotor(valor,valor,valor);
   Serial.print(a);
   Serial.print("  ");
   Serial.print(b);
