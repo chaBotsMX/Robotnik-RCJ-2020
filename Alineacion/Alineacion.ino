@@ -1,46 +1,16 @@
-#include <EEPROM.h>
 #include <Wire.h>
 #include <MechaQMC5883.h>
 MechaQMC5883 qmc;
 
 float deg,vu;
 float zero = 0.00f, current;
-
-float v_c() {
-  int x, y, z;
-  float azimuth; //is supporting float too
-  qmc.read(&x, &y, &z);
-  azimuth = qmc.azimuth(&y,&x);//you can get custom azimuth
-  return azimuth;
-}
-
-float pv = 0.00f;
-
-float v_n(float vc) {
-  float n = v_c();
-  float nv;
-  pv = vc;
-  nv = n - pv;
-  if (nv < 0)
-    nv = nv + 360;
-  return nv;
-}
-
-
-int DirectionAngle(byte Direction) {
-  return Direction * 30 - 150;
-}
-
 long long int tiempo;
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
   qmc.init();
-  
-  EEPROM.get(0,zero);
-  zero*=180/M_PI;
-  //PINES LEDS 
+   
   pinMode(0, INPUT_PULLUP);
   pinMode(15, INPUT_PULLUP);
   
@@ -50,31 +20,12 @@ void setup() {
   pinMode(43,OUTPUT);
   pinMode(47,OUTPUT);
   
-  
   pinMode(49,OUTPUT);
   pinMode(45,OUTPUT);  
 
-pinMode(13,OUTPUT);
- }
- 
-int reset(float heading) {
-  EEPROM.put(0, heading); //  Sobreescribir valor
-  while (!digitalRead(14));
-  return heading;
+  pinMode(13,OUTPUT);
 }
  
-bool S1; //Sensor de Linea
-bool S2; //Sensor de Linea 2 
-bool S3; //Sensor de Linea 3
-int posicion;
-int us1; // Ultrasonico 1
-int us2; // Ultrasonico 2
-int us3; // Ultrasonico 2
-int vel = 50;  
-int up;   //ultima posision
-int intensidad;
-int espera;
-
 void motor_AA(float a){
   digitalWrite(47,LOW);
   digitalWrite(49,HIGH);
@@ -84,23 +35,19 @@ void motor_AT(float a){
   digitalWrite(47,HIGH);
   digitalWrite(49,LOW);
   analogWrite(10, a);
- 
 }
 void motor_BA(float b){
-  
   digitalWrite(45,LOW);
   digitalWrite(43,HIGH);
   analogWrite(9, b);
 }
 void motor_BT(float b){
-  
   digitalWrite(45,HIGH);
   digitalWrite(43,LOW);
   analogWrite(9, b);
 }
 void motor_CA(float c){
-  
-     digitalWrite(35,HIGH);
+  digitalWrite(35,HIGH);
   digitalWrite(37,LOW);
   analogWrite(11, c);
 }
@@ -110,7 +57,7 @@ void motor_CT(float c){
   analogWrite(11, c);
 }
 void off(){
- digitalWrite(47,HIGH);
+  digitalWrite(47,HIGH);
   digitalWrite(49,HIGH);
   analogWrite(10, 255);
   
@@ -118,7 +65,7 @@ void off(){
   digitalWrite(43,HIGH);
   analogWrite(9, 255);
   
-     digitalWrite(35,HIGH);
+  digitalWrite(35,HIGH);
   digitalWrite(37,HIGH);
   analogWrite(11, 255);
 }
@@ -193,17 +140,17 @@ void loop() {
   float valor=(vu/180*kp);
   
   setMotor(valor,valor,valor);
+  
   Serial.print(a);
   Serial.print("  ");
   Serial.print(b);
   Serial.print("  ");
   Serial.print(c);
-
   Serial.print(" " );
   Serial.println(vu );
+  
   if(millis()-tiempo>2){
     tiempo=millis();
     angulo+=10;  
   }
-
 }
