@@ -41,15 +41,13 @@ void inicializar_ir(){
   Wire.endTransmission();
 }
 
-int heading12hz(){
-  
-}
-
 void setup() {
   Serial.begin(9600);
   inicializar_ir();
 }
+
 int head;
+
 void loop() {
   Wire.beginTransmission(adress7bit);
   Wire.write(0x06);
@@ -59,5 +57,5 @@ void loop() {
   if(Wire.available()<=2){
     head=Wire.read();
   }
-  Serial.println(head);
+  Serial.println(head*5);
 }
