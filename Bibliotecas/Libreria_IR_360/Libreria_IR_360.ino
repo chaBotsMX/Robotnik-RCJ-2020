@@ -3,7 +3,8 @@
 /*                                                                       */
 /****************************CHABOTS ROBOTNIK*****************************/
 /*                                                                       */
-/*Libreria IR Locator 360 ModernRobotics V 1.0                           */
+/*Libreria IR Locator 360 ModernRobotics V 0.1                           */
+/*https://modernroboticsinc.com/product/ir-locator-360/                  */
 /*S.L.P MEXICO                           TIME:16:37:40 PM DATE:10/23/2019*/
 /*************************************************************************/
 
@@ -25,17 +26,38 @@ Direccion I2c 8-Bit
 
 #include <Wire.h>
 
+#define adress7bit 0x0E
+#define adress8bit 0x1C
+int heading1200hz =0x04;
+int headindsignal1200hz =0x05;
+int heading600hz=0x06;
+int headindsignal600hz=0x07;
 
 void inicializar_ir(){
+  Wire.begin();
+  Wire.beginTransmission(adress7bit);
+  Wire.write(0x00);
+  Wire.write(2);
+  Wire.endTransmission();
+}
+
+int heading12hz(){
   
 }
 
 void setup() {
-  // put your setup code here, to run once:
-
+  Serial.begin(9600);
+  inicializar_ir();
 }
-
+int head;
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  Wire.beginTransmission(adress7bit);
+  Wire.write(0x06);
+  Wire.endTransmission();
+  Wire.requestFrom(adress7bit,2);
+  int head;
+  if(Wire.available()<=2){
+    head=Wire.read();
+  }
+  Serial.println(head);
 }
