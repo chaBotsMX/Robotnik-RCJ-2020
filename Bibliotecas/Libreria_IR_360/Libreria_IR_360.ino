@@ -37,7 +37,6 @@ void inicializar_ir(){
   Wire.begin();
   Wire.beginTransmission(adress7bit);
   Wire.write(0x00);
-  Wire.write(2);
   Wire.endTransmission();
 }
 
@@ -52,10 +51,11 @@ void loop() {
   Wire.beginTransmission(adress7bit);
   Wire.write(0x06);
   Wire.endTransmission();
-  Wire.requestFrom(adress7bit,2);
+  Wire.requestFrom(adress7bit,1);
   int head;
-  if(Wire.available()<=2){
+  if(Wire.available()<=1){
     head=Wire.read();
+    
   }
   Serial.println(head*5);
 }
