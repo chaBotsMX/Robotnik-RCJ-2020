@@ -54,8 +54,9 @@ void loop() {
   Wire.requestFrom(adress7bit,1);
   int head;
   if(Wire.available()<=1){
-    head=Wire.read();
-    
+    head=Wire.read()*5;
   }
-  Serial.println(head*5);
+  if(head>360)
+    head=-1;
+  Serial.println(head);
 }
