@@ -7,7 +7,7 @@
 /*https://modernroboticsinc.com/product/ir-locator-360/                  */
 /*S.L.P MEXICO                           TIME:16:37:40 PM DATE:10/23/2019*/
 /*************************************************************************/
-//Puto el que me lo robe
+
 /*
 Direcciones de datos I2C
   0x00 Sensor Firmware Revision
@@ -34,7 +34,7 @@ Direccion I2c 8-Bit
 #define heading600hz 0x06
 #define signalstrength600hz 0x07
 
-void inicializar_ir(){
+void sensorInitialization(){
   Wire.begin();
   Wire.beginTransmission(adress7bit);
   Wire.write(sensorfirmware);
@@ -55,25 +55,25 @@ int dataReturn(int i2c){
   return head;
 }
 
-int direccionangulo(){
+int angleDirection(){
   return dataReturn(heading600hz)*5;
 }
 
-int signalstrength(){
+int signalStrength(){
   return dataReturn(signalstrength1200hz);
 }
 
 
 void setup() {
   Serial.begin(9600);
-  inicializar_ir();
+  sensorInitialization();
 }
 
 
 int head;
 
 void loop() {
-  Serial.print(signalstrength());
+  Serial.print(signalStrength());
   Serial.print("\t");
-  Serial.println(direccionangulo());
+  Serial.println(angleDirection());
 }
