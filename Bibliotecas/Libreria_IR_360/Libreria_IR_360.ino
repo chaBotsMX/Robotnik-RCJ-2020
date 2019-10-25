@@ -3,11 +3,11 @@
 /*                                                                       */
 /****************************CHABOTS ROBOTNIK*****************************/
 /*                                                                       */
-/*Libreria IR Locator 360 ModernRobotics V 0.1                           */
+/*Libreria IR Locator 360 ModernRobotics V 3.0                           */
 /*https://modernroboticsinc.com/product/ir-locator-360/                  */
 /*S.L.P MEXICO                           TIME:16:37:40 PM DATE:10/23/2019*/
 /*************************************************************************/
-
+//Puto el que me lo robe
 /*
 Direcciones de datos I2C
   0x00 Sensor Firmware Revision
