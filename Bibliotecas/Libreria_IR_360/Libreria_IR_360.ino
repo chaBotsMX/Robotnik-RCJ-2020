@@ -3,7 +3,7 @@
 /*                                                                       */
 /****************************CHABOTS ROBOTNIK*****************************/
 /*                                                                       */
-/*Libreria IR Locator 360 ModernRobotics V 3.1                           */
+/*Libreria IR Locator 360 ModernRobotics V 3.2                           */
 /*https://modernroboticsinc.com/product/ir-locator-360/                  */
 /*S.L.P MEXICO                           TIME:16:37:40 PM DATE:10/23/2019*/
 /*************************************************************************/
@@ -41,7 +41,7 @@ void sensorInitialization(){
   Wire.endTransmission();
 }
 
-int dataReturn(int i2c){
+int dataReturn(byte i2c){
   Wire.beginTransmission(adress7bit);
   Wire.write(i2c);
   Wire.endTransmission();
