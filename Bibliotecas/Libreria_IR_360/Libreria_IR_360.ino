@@ -28,35 +28,52 @@ Direccion I2c 8-Bit
 
 #define adress7bit 0x0E
 #define adress8bit 0x1C
-int heading1200hz =0x04;
-int headindsignal1200hz =0x05;
-int heading600hz=0x06;
-int headindsignal600hz=0x07;
+#define sensorfirmware 0x00
+#define heading1200hz 0x04
+#define signalstrength1200hz 0x05
+#define heading600hz 0x06
+#define signalstrength600hz 0x07
 
 void inicializar_ir(){
   Wire.begin();
   Wire.beginTransmission(adress7bit);
-  Wire.write(0x00);
+  Wire.write(sensorfirmware);
   Wire.endTransmission();
 }
+
+int dataReturn(int i2c){
+  Wire.beginTransmission(adress7bit);
+  Wire.write(i2c);
+  Wire.endTransmission();
+  Wire.requestFrom(adress7bit,1);
+  int head;
+  if(Wire.available()<=1){  
+    head=Wire.read();
+  }
+  if(head>355)
+    head=-1;
+  return head;
+}
+
+int direccionangulo(){
+  return dataReturn(heading600hz)*5;
+}
+
+int signalstrength(){
+  return dataReturn(signalstrength1200hz);
+}
+
 
 void setup() {
   Serial.begin(9600);
   inicializar_ir();
 }
 
+
 int head;
 
 void loop() {
-  Wire.beginTransmission(adress7bit);
-  Wire.write(0x06);
-  Wire.endTransmission();
-  Wire.requestFrom(adress7bit,1);
-  int head;
-  if(Wire.available()<=1){
-    head=Wire.read()*5;
-  }
-  if(head>360)
-    head=-1;
-  Serial.println(head);
+  Serial.print(signalstrength());
+  Serial.print("\t");
+  Serial.println(direccionangulo());
 }
