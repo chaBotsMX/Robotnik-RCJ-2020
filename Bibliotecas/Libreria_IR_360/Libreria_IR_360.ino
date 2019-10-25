@@ -50,8 +50,6 @@ int dataReturn(byte i2c){
   if(Wire.available()<=1){  
     head=Wire.read();
   }
-  if(head>355)
-    head=-1;
   return head;
 }
 
