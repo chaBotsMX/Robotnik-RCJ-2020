@@ -3,7 +3,7 @@
 /*                                                                       */
 /****************************CHABOTS ROBOTNIK*****************************/
 /*                                                                       */
-/*Libreria IR Locator 360 ModernRobotics V 3.0                           */
+/*Libreria IR Locator 360 ModernRobotics V 3.1                           */
 /*https://modernroboticsinc.com/product/ir-locator-360/                  */
 /*S.L.P MEXICO                           TIME:16:37:40 PM DATE:10/23/2019*/
 /*************************************************************************/
@@ -63,14 +63,10 @@ int signalStrength(){
   return dataReturn(signalstrength1200hz);
 }
 
-
 void setup() {
   Serial.begin(9600);
   sensorInitialization();
 }
-
-
-int head;
 
 void loop() {
   Serial.print(signalStrength());
