@@ -10,9 +10,7 @@
 #include "Wire.h"
 #include "IRLocator360.h"
 
-IRLocator360::IRLocator360() {
-
-}
+IRLocator360::IRLocator360() {}
 
 int IRLocator360::sensorInitialization() {
 	Wire.begin();
