@@ -53,20 +53,12 @@ int dataReturn(byte i2c){
   return head;
 }
 
-int angleDirection600hz(){
+int angleDirection(){
   return dataReturn(heading600hz)*5;
 }
 
-int signalStrength600hz(){
+int signalStrength(){
   return dataReturn(signalstrength600hz);
-}
-
-int signalStrength1200hz(){
-  return dataReturn(signalstrength1200hz);
-}
-
-int angleDirection1200hz(){
-  return dataReturn(heading1200hz)*5;
 }
 
 void setup() {
