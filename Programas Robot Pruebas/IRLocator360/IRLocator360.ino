@@ -1,11 +1,10 @@
 #include <IRLocator360.h>
-
+IRLocator360 xd;
 void setup() {
-  // put your setup code here, to run once:
-
+ Serial.begin(9600);
+xd.sensorInitialization();  
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+    Serial.println(xd.angleDirection600hz());
 }

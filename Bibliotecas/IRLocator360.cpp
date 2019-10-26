@@ -10,16 +10,15 @@
 #include "Wire.h"
 #include "IRLocator360.h"
 
-IRLocator360::IRLocator360(){
-	
+IRLocator360::IRLocator360() {
+
 }
 
 int IRLocator360::sensorInitialization() {
 	Wire.begin();
 	Wire.beginTransmission(adress7bit);
 	Wire.write(sensorfirmware);
-	Wire.endTransmission();
-	return true;
+	Wire.endTransmission();	
 }
 
 int IRLocator360::dataReturn(byte i2c) {

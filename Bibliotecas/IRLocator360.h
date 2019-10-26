@@ -8,6 +8,7 @@
 
 #ifndef IRLocator360_h
 #define IRLocator360_h
+
 #include "Arduino.h"
 
 class IRLocator360{
@@ -28,4 +29,5 @@ class IRLocator360{
 		const int heading6hz=0x06;
 		const int signalstrength6hz=0x07;
 };
+
 #endif
