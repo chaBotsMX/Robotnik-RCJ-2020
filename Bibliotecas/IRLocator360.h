@@ -39,13 +39,13 @@ class IRLocator360{
 		int angleDirection1200hz();
 		int signalStrength1200hz();
 	private:
-		const int adress7bit=0x0E;
-		const int adress8bit=0x1C;
-		const int sensorfirmware=0x00;
-		const int heading12hz=0x04;
-		const int signalstrength12hz=0x05;
-		const int heading6hz=0x06;
-		const int signalstrength6hz=0x07;
+		const byte adress7bit=0x0E;
+		const byte adress8bit=0x1C;
+		const byte sensorfirmware=0x00;
+		const byte heading12hz=0x04;
+		const byte signalstrength12hz=0x05;
+		const byte heading6hz=0x06;
+		const byte signalstrength6hz=0x07;
 };
 
 #endif
