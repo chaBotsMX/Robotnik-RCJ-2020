@@ -20,10 +20,10 @@ class Motor{
     void alineacionxd(float error);
     void test();
   private:
-    int _ina[3];
-    int _inb[3];
-    int _pwm[3];
-    int _anglewheel[3]={30,-30,90};
+    int _ina[];
+    int _inb[];
+    int _pwm[];
+    int _anglewheel[]={30,-30,90};
     float _tp;
     int _angle;
     int _error;

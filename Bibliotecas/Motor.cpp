@@ -24,59 +24,53 @@ void mov(int angle, int error){
 
 void setMotor(float a, float b, float c){
 	if(a>=0){//adelant
-	a=abs(a);
-	a=min(a,tp);
-	//adelante
-	digitalWrite(24,LOW);
-	digitalWrite(25,HIGH);
-	analogWrite(7,b);
-	digitalWrite(13,LOW);
+		a=abs(a);
+		a=min(a,tp);
+		//adelante
+		digitalWrite(24,LOW);
+		digitalWrite(25,HIGH);
+		analogWrite(7,b);
+		digitalWrite(13,LOW);
 	}
 	else if(a<0){ //atras
-	a=abs(a);
-	a=min(a,tp);
-	digitalWrite(24,HIGH);
-	digitalWrite(25,LOW);
-	analogWrite(7,b);
-
-	digitalWrite(13,LOW);
+		a=abs(a);
+		a=min(a,tp);
+		digitalWrite(24,HIGH);
+		digitalWrite(25,LOW);
+		analogWrite(7,b);
+		digitalWrite(13,LOW);
 	}
 	if(b>=0){//adelante
-
-	b=abs(b);
-	b=min(b,tp);
-	digitalWrite(52,LOW);
-	digitalWrite(53,HIGH);
-	analogWrite(8,a);
-
-	digitalWrite(13,LOW);
+		b=abs(b);
+		b=min(b,tp);
+		digitalWrite(52,LOW);
+		digitalWrite(53,HIGH);
+		analogWrite(8,a);
+		digitalWrite(13,LOW);
 	}
 	else if(b<0){ //atras
-
-	b=abs(b);
-	b=min(b,tp);
-	digitalWrite(52,HIGH);
-	digitalWrite(53,LOW);
-	analogWrite(8,a);
-
-	digitalWrite(13,LOW);
+		b=abs(b);
+		b=min(b,tp);
+		digitalWrite(52,HIGH);
+		digitalWrite(53,LOW);
+		analogWrite(8,a);
+		digitalWrite(13,LOW);
 	}
 	if(c>=0){//adelante
-
-	c=abs(c);
-	c=min(c,tp);
-	digitalWrite(23,LOW);
-	digitalWrite(22,HIGH);
-	analogWrite(2,c);
-	digitalWrite(13,LOW);
+		c=abs(c);
+		c=min(c,tp);
+		digitalWrite(23,LOW);
+		digitalWrite(22,HIGH);
+		analogWrite(2,c);
+		digitalWrite(13,LOW);
 	}
 	else if(c<0){ //atras
-	c=abs(c);
-	c=min(c,tp);
-	digitalWrite(22,LOW);
-	digitalWrite(23,HIGH);
-	analogWrite(2,c);
-	digitalWrite(13,LOW);
+		c=abs(c);
+		c=min(c,tp);
+		digitalWrite(22,LOW);
+		digitalWrite(23,HIGH);
+		analogWrite(2,c);
+		digitalWrite(13,LOW);
 	}
 }
 
