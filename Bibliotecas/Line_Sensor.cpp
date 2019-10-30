@@ -8,26 +8,21 @@
 /*************************************************************************/
 
 #include "Arduino.h"
-#include "Adafruit_NeoPixel.h"
 #include "Line_Sensor.h"
 
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-Line_Sensor::Line_Sensor(byte port[], int umbral, byte pinNeopixel) {
+Line_Sensor::Line_Sensor(byte port[], int umbral) {
 	for (int i = 0; i < 3; i++)
 		_port[i] = port[i];
 	_umbral = umbral;
-	_pinNeopixel = pinNeopixel;
-	pixels.begin();   
 }
 
-bool Line_Sensor::inLine() {
+bool Line_Sensor::isLine() {
 	for (int i = 0; i < 3; i++)
 		if (analogRead(_port[i]) >= _umbral)
 			return true;
 	return false;
 }
-
+/*
 void Line_Sensor::setColor(byte r, byte g, byte b) {
 	pixels.Color(_r, _g, _b);
 	pixels.show();   
@@ -39,3 +34,4 @@ void Line_Sensor::itsMomentToFun(byte r, byte g, byte b) {
 		pixels.show();
 	}
 }
+*/

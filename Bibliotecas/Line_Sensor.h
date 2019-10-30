@@ -11,22 +11,19 @@
 #define Line_Sensor_h
 
 #include "Arduino.h"
-#include <Adafruit_NeoPixel.h>
+//#include <Adafruit_NeoPixel.h>
+
+//Adafruit_NeoPixel pixels(pinNeopixel, numPixels, NEO_GRB + NEO_KHZ800);
 
 class Line_Sensor{
 	public:
-		Line_Sensor(byte port[], int umbral, byte pinNeopixel);
+		Line_Sensor(byte port[], int umbral);
 		bool isLine();
-		void setColor(byte r, byte g, byte b);
-		void itsMomentToFun(byte r, byte g, byte b);
+	//	void setColor(byte r, byte g, byte b);
+		//void itsMomentToFun(byte r, byte g, byte b);
 	private:
 		int _umbral;
 		byte _port[];
-		byte _r;
-		byte _g;
-		byre _b;
-		byte _pinNeopixel;
-		const byte numPixels = 3;
 };
 
 
