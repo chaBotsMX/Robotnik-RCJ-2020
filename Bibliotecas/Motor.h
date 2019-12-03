@@ -12,26 +12,22 @@
 
 #include "Arduino.h"
 
-class Motor{
+class Motor
+{
   public:
-    Motor(int ina[], int inb[], int pwm[], float tp, float tpalineacion);
+    Motor(int _ina[], int _inb[], int _pwm[], float _tp, float _tpalineacion);
     void setMotor(float a, float b, float c);
     void mov(int angle, int error); //En mov agrego los angulos
     //void alineacion(); //return kp para moverme
     void alineacionxd(float error);
     void test();
   private:
-    int _ina[];
-    int _inb[];
-    int _pwm[];
-    int _anglewheel[]={30,-30,90};
-    float _tp;
-    int _angle;
-    int _error;
-    int _tpalineacion;
-    float _a;
-    float _b;
-    float _c;
+    int ina[4];
+    int inb[4];
+    int pwm[4];
+    int anglewheel[3]={30,-30,90};
+    float tp;
+    int tpalineacion;
 };
 
 #endif
