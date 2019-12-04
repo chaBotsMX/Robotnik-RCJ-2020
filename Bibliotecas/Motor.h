@@ -15,19 +15,20 @@
 class Motor
 {
   public:
-    Motor(int _ina[], int _inb[], int _pwm[], float _tp, float _tpalineacion);
-    void setMotor(float a, float b, float c);
-    void mov(int angle, int error); //En mov agrego los angulos
+    Motor(int ina[], int inb[], int pwm[], float tp, int tpalineacion);
+    void set(float a, byte n);
+    void move(int angle, float error);
+    void alineacion(float error);
     //void alineacion(); //return kp para moverme
-    void alineacionxd(float error);
-    void test();
+    /*void alineacionxd(float error);
+    void test();*/
   private:
-    int ina[4];
-    int inb[4];
-    int pwm[4];
-    int anglewheel[3]={30,-30,90};
-    float tp;
-    int tpalineacion;
+    int _ina[4];
+    int _inb[4];
+    int _pwm[4];
+    int anglewheel[4]={0,30,-30,90};
+    float _tp;
+    int _tpalineacion;
 };
 
 #endif
