@@ -11,6 +11,13 @@ double getFilter(double rot){
   return (rt-360)/180.0;
 }
 
+double error(double rot){
+    double err=360.00-rot;
+    if(err>180.00)
+      err=err-360.00;
+    return err;    
+}
+
 double getRawRotation(){
   myIMU.dataAvailable();
   float x = myIMU.getQuatI();
@@ -55,6 +62,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(getFilter(360.00-getRotation()));
+  Serial.println(error(getRotation()));
+  //Serial.println(getFilter(360.00-getRotation()));
   //Serial.println(360.00-getRotation());
 }
