@@ -55,5 +55,5 @@ void setup()
     
 }
 void loop() {
-  Serial.println(getRotation());
+  Serial.println(360.00-getRotation());
 }
