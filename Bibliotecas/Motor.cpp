@@ -30,15 +30,15 @@ void Motor::set(float a, byte n){
     analogWrite(_pwm[n], abs(a));
 }
 
-void Motor::move(int angle, float error){
-    float valor=(error/180*_tpalineacion);
+void Motor::move(int angle, double error){
+    float valor=(error/180.00*_tpalineacion);
     for(int i=1; i<=3; i++){
-        float a=cos((angulo+(anglewheel[i]))*M_PI/180)*_tp;
-
-        set(valor)
+        //float a=cos((angle+(anglewheel[i]))*M_PI/180)*_tp;
+        float a = nop[i]>0 ? cos((angle+(anglewheel[i]))*M_PI/180)*_tp : -cos((angle+(anglewheel[i]))*M_PI/180)*_tp;
+        set(valor+a,i);
     }
 }
 
-void Motor::alineacion(float error){
+void Motor::alineacion(double error){
 
 }
