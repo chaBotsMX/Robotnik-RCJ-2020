@@ -39,11 +39,10 @@ double getRotation(){
     rt-=360;
   // Regresar la rotacion actual del robot
   return rt;
- 
+  
 }
 
-void setup() 
-{
+void setup() {
   Serial.begin(9600);  
   Wire.begin();
   
@@ -54,6 +53,8 @@ void setup()
   }
     
 }
+
 void loop() {
-  Serial.println(360.00-getRotation());
+  Serial.println(getFilter(360.00-getRotation()));
+  //Serial.println(360.00-getRotation());
 }
