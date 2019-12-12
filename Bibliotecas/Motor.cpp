@@ -40,5 +40,7 @@ void Motor::move(int angle, double error){
 }
 
 void Motor::alineacion(double error){
-
+  float valor=(error/180.00*_tpalineacion);
+  for(int i=1; i<=3; i++)
+    set(valor, i);
 }

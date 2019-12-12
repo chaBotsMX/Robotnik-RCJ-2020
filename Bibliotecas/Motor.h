@@ -27,7 +27,7 @@ class Motor
     int _inb[4];
     int _pwm[4];
     int anglewheel[4]={0,30,-30,90};
-    int nop[4]={0,0,0,0};
+    int nop[4]={0,1,1,-1};
     float _tp;
     int _tpalineacion;
 };
