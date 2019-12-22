@@ -27,7 +27,7 @@ void Motor::set(float a, byte n){
     bool dir= a>0? 1:0;
     digitalWrite(_ina[n], dir);
     digitalWrite(_inb[n], !dir);
-    analogWrite(_pwm[n], abs(a));
+    analogWrite(min(_pwm[n], min(abs(a),200);
 }
 
 void Motor::move(int angle, double error){
