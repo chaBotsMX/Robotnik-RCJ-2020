@@ -1,8 +1,8 @@
 #include "SparkFun_BNO080_Arduino_Library.h"
 #include <Wire.h>
 #include <DueFlashStorage.h>
-#include <IRLocator360.h>
-#include <Motor.h>
+#include "IRLocator360.h"
+#include "Motor.h"
 //3537
 int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
@@ -79,21 +79,21 @@ void setup() {
   
   myIMU.begin();
   myIMU.enableRotationVector(50);
-  targetRotation=dueFlashStorage.read(0)-dueFlashStorage.read(1);
+  targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
   
   IR.sensorInitialization();
-    pinMode(9,OUTPUT);
+  pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
-
+  pinMode(2,INPUT_PULLUP);
+ //7 pinMode(5,OUTPUT);
 }
 
 void loop() {
-  int angle=IR.angleDirection600hz();
-  
+  int angle=IR.angleDirection600hz();  
   if(angle>=10||angle<=180)
-    angle=angle+5;
-  else if(angle<355)
-    angle=angle-5;
+    angle=angle+10;
+  else if(angle>180||angle<=350)
+    angle=angle-10;
   double erro=error(getRotation());
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
@@ -102,15 +102,15 @@ void loop() {
     digitalWrite(9,HIGH);
   else
     digitalWrite(9,LOW);
-    
   float valor=(erro/180.00*255);
-    float a=cos((angle-(30))*M_PI/180)*130;
-    float b=cos((angle+30)*M_PI/180)*130;
-    float c=-cos((angle-90)*M_PI/180)*130;    
+  
+  float a=cos((angle-(30))*M_PI/180)*100;
+  float b=cos((angle+30)*M_PI/180)*100;
+  float c=-cos((angle-90)*M_PI/180)*100;    
     
-    mot.set(valor+a,1);
-    mot.set(valor+b,2);
-    mot.set(valor-c,3);
+  mot.set(valor+a,1);
+  mot.set(valor+b,2);
+  mot.set(valor-c,3);
   Serial.print(valor+a);
   Serial.print("  ");
   Serial.print(valor+b);
@@ -122,11 +122,16 @@ void loop() {
   Serial.print(targetRotation);
   Serial.print("  ");
   Serial.println(angle);
+ 
+  
   //mot.alineacion(erro);  
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
   if(!digitalRead(52)==1){
     targetRotation=escribir(getRawRotation());
+  }
+  if(!digitalRead(2)==1){
+    myIMU.softReset();  
   }
 }
