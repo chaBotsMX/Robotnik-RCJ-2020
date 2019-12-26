@@ -3,6 +3,8 @@
 #include <DueFlashStorage.h>
 #include "IRLocator360.h"
 #include "Motor.h"
+#define in 80
+#define inn 6400
 //3537
 int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
@@ -74,7 +76,7 @@ double escribir(double alineacion){
 
 
 void setup() {
-  Serial.begin(9600);  
+  //Serial.begin(9600);  
   Wire.begin();
   
   myIMU.begin();
@@ -89,12 +91,26 @@ void setup() {
 }
 
 void loop() {
+  int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
-  if(angle>=10||angle<=180)
+  bool x;
+  /*if(angle>=10||angle<=180)
     angle=angle+10;
   else if(angle>180||angle<=350)
-    angle=angle-10;
+    angle=angle-10;*/
   double erro=error(getRotation());
+  
+  if(angle<=355&&angle>=5){
+  angle>=180 ? x=1 : x=0; 
+  angle>=180 ? angle=360.00-angle : angle=angle;
+  double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
+  double d=asin(((intensidad*sin(angle*M_PI/180.00))/t))*180.00/M_PI;
+  if(!x)
+    angle=180.00-(180.00-angle-d);
+  else
+    angle=180.00+(180.00-angle-d);
+  }
+  
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
   //Serial.println(erro);
@@ -104,24 +120,14 @@ void loop() {
     digitalWrite(9,LOW);
   float valor=(erro/180.00*255);
   
-  float a=cos((angle-(30))*M_PI/180)*100;
-  float b=cos((angle+30)*M_PI/180)*100;
-  float c=-cos((angle-90)*M_PI/180)*100;    
+  float a=cos((angle-(30))*M_PI/180)*150;
+  float b=cos((angle+30)*M_PI/180)*150;
+  float c=-cos((angle-90)*M_PI/180)*150;    
     
   mot.set(valor+a,1);
   mot.set(valor+b,2);
   mot.set(valor-c,3);
-  Serial.print(valor+a);
-  Serial.print("  ");
-  Serial.print(valor+b);
-  Serial.print("  ");
-  Serial.print(valor-c);
-  Serial.print("  " );
-  Serial.print(erro);
-  Serial.print("  ");
-  Serial.print(targetRotation);
-  Serial.print("  ");
-  Serial.println(angle);
+  
  
   
   //mot.alineacion(erro);  

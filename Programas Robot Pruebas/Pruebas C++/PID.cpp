@@ -10,7 +10,7 @@ int main(){
     int a=80; //Intencidad actual de la pelota
     int b=20; // Intensidad constante de la pelota
     bool x; // Bandera
-    int C=235; // Angulo actual del sensor IR
+    int C=0; // Angulo actual del sensor IR
     C>180 ? x=1 : x=0; //Bandera
     C>180 ? C=360.00-C : C=C; // Mayor o menor a 180
 
