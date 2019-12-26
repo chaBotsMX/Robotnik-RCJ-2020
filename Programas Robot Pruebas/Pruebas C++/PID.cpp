@@ -1,6 +1,5 @@
 #include <iostream>
 #include <math.h>
-
 using namespace std;
 /*
     PID Chabots Robotnik Prueba en C++
