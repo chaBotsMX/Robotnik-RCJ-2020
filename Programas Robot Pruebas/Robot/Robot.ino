@@ -76,7 +76,7 @@ double escribir(double alineacion){
 
 
 void setup() {
-  //Serial.begin(9600);  
+  Serial.begin(9600);  
   Wire.begin();
   
   myIMU.begin();
@@ -134,6 +134,7 @@ void loop() {
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
+  Serial.println("F");
   if(!digitalRead(52)==1){
     targetRotation=escribir(getRawRotation());
   }
