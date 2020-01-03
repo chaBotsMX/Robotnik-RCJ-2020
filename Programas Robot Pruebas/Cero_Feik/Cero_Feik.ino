@@ -6,7 +6,8 @@ int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
 int pwm[]={0,8,7,6};
 
-
+const int magx = 10;
+const int magy = 5;
 
 double targetRotation=0.0;
 BNO080 myIMU;
@@ -38,12 +39,25 @@ double getRawRotation(){
   return atan2(siny_cosp, cosy_cosp)*180.0/3.141592653;
 }
 
+double mag(){
+  myIMU.dataAvailable();
+  float x = myIMU.getMagX();
+  float y = myIMU.getMagY();
+  float z = myIMU.getMagZ();
+  float angle = atan2(x-magx, y-magy)*180.00/M_PI;
+  return angle;
+}
+
+double Set=0;
+
 double getRotation(){
   // Leer la rotacion en cuanto al Norte Magnetico del IMU
-  double rot = getRawRotation();
+  double rot=0;
+  
+  Set < 0 ? rot=360.00+Set : rot = Set;
   
   // Obtener la rotacion relativa al frente inicial (rotacion "0")
-  double rt=rot-targetRotation;
+  double rt=rot+getRawRotation();
 
   // Condiciones para asegurarnos de que el valor de rotacion
   // regresado (como resultado) por la funcion sea valido 
@@ -54,18 +68,22 @@ double getRotation(){
     rt-=360;
   // Regresar la rotacion actual del robot
   return rt;
-  
 }
+
 
 void setup() {
   Serial.begin(9600);  
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
+  myIMU.enableMagnetometer(50);
   targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
+  Set=getRawRotation()+(targetRotation-getRotation());
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
+  delay(20); //CAMBIAR A MILLIS
 }
+
 
 double escribir(double alineacion){
   alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
@@ -77,24 +95,25 @@ double escribir(double alineacion){
     dueFlashStorage.write(0,0);
     dueFlashStorage.write(1,alineacion);
   } 
-  return dueFlashStorage.read(0)+dueFlashStorage.read(1);
 }
-
-void loop() {
-  if(!digitalRead(52)==1){
-    targetRotation=escribir(getRawRotation());
-  }  
-  double mag=getRawRotation();
-  if(mag<0)
-    mag=360.00+mag;
-    
-  Serial.print(mag);
-  Serial.print("\t");
   
+void loop() {
+  double erro = getRawRotation() - Set;
+  
+  erro < 0 ? erro= 360.00+erro : erro=erro;  
+  
+  if(!digitalRead(52)==1){
+    escribir(mag());
+    Set=getRawRotation();
+  }  
+  
+  Serial.print(Set);
+  Serial.print("\t");
+
+  Serial.print(getRotation());
+  Serial.print("\t");
+   
   Serial.print(targetRotation);
   Serial.print("\t");
-  Serial.println(error(getRotation()));
-  //Serial.println(error(getRotation()));
-  //Serial.println(getFilter(360.00-getRotation()));
-  //Serial.println(erro);
+  Serial.println(erro);
 }
