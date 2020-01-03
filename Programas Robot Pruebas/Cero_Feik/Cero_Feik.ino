@@ -1,15 +1,11 @@
 #include "SparkFun_BNO080_Arduino_Library.h"
 #include <Wire.h>
 #include <DueFlashStorage.h>
-#include <IRLocator360.h>
-#include <Motor.h>
 //3537
 int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
 int pwm[]={0,8,7,6};
 
-Motor mot(ina,inb,pwm,230,230);
-IRLocator360 IR;
 
 
 double targetRotation=0.0;
@@ -66,12 +62,13 @@ void setup() {
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
-  targetRotation=dueFlashStorage.read(0)-dueFlashStorage.read(1);
+  targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
 }
 
 double escribir(double alineacion){
+  alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
   if(alineacion>255){
     dueFlashStorage.write(0,255);
     dueFlashStorage.write(1,alineacion-255);
@@ -84,10 +81,16 @@ double escribir(double alineacion){
 }
 
 void loop() {
-  int angle=IR.angleDirection600hz();
   if(!digitalRead(52)==1){
     targetRotation=escribir(getRawRotation());
   }  
+  double mag=getRawRotation();
+  if(mag<0)
+    mag=360.00+mag;
+    
+  Serial.print(mag);
+  Serial.print("\t");
+  
   Serial.print(targetRotation);
   Serial.print("\t");
   Serial.println(error(getRotation()));
