@@ -3,18 +3,22 @@
 #include <DueFlashStorage.h>
 #include "IRLocator360.h"
 #include "Motor.h"
-#define in 80
-#define inn 6400
+#define in 120
+#define inn 14400
 //3537
 int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
 int pwm[]={0,8,7,6};
+
+const int magx = 10;
+const int magy = 5;
 
 Motor mot(ina,inb,pwm,230,230);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
 
 double targetRotation=0.0;
+double Set=0.0;
 BNO080 myIMU;
 
 double getFilter(double rot){
@@ -43,12 +47,22 @@ double getRawRotation(){
   return atan2(siny_cosp, cosy_cosp)*180.0/3.141592653;
 }
 
+double mag(){
+  myIMU.dataAvailable();
+  float x = myIMU.getMagX();
+  float y = myIMU.getMagY();
+  float z = myIMU.getMagZ();
+  return atan2(x-magx, y-magy)*180.00/M_PI;
+}
+
 double getRotation(){
   // Leer la rotacion en cuanto al Norte Magnetico del IMU
-  double rot = getRawRotation();
+  double rot=0;
+  
+  Set < 0 ? rot=360.00+Set : rot = Set;
   
   // Obtener la rotacion relativa al frente inicial (rotacion "0")
-  double rt=rot-targetRotation;
+  double rt=rot+getRawRotation();
 
   // Condiciones para asegurarnos de que el valor de rotacion
   // regresado (como resultado) por la funcion sea valido 
@@ -59,10 +73,10 @@ double getRotation(){
     rt-=360;
   // Regresar la rotacion actual del robot
   return rt;
-  
 }
 
 double escribir(double alineacion){
+  alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
   if(alineacion>255){
     dueFlashStorage.write(0,255);
     dueFlashStorage.write(1,alineacion-255);
@@ -71,7 +85,6 @@ double escribir(double alineacion){
     dueFlashStorage.write(0,0);
     dueFlashStorage.write(1,alineacion);
   } 
-  return dueFlashStorage.read(0)+dueFlashStorage.read(1);
 }
 
 
@@ -81,7 +94,9 @@ void setup() {
   
   myIMU.begin();
   myIMU.enableRotationVector(50);
+  myIMU.enableMagnetometer(50);
   targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
+  Set=getRawRotation()+(targetRotation-getRotation());
   
   IR.sensorInitialization();
   pinMode(9,OUTPUT);
@@ -98,7 +113,11 @@ void loop() {
     angle=angle+10;
   else if(angle>180||angle<=350)
     angle=angle-10;*/
-  double erro=error(getRotation());
+  double erro = getRawRotation() - Set;
+  
+  erro < 0 ? erro= 360.00+erro : erro=erro;  
+  
+  double imu=error(erro);
   
   if(angle<=355&&angle>=5){
   angle>=180 ? x=1 : x=0; 
@@ -114,11 +133,13 @@ void loop() {
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
   //Serial.println(erro);
-  if(abs(erro)>=175||abs(erro)<=5)
+  
+  if(abs(imu)>=175||abs(imu)<=5)
     digitalWrite(9,HIGH);
   else
     digitalWrite(9,LOW);
-  float valor=(erro/180.00*255);
+    
+  float valor=(imu/180.00*255);
   
   float a=cos((angle-(30))*M_PI/180)*150;
   float b=cos((angle+30)*M_PI/180)*150;
@@ -134,9 +155,11 @@ void loop() {
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
-  Serial.println("F");
+  Serial.println(imu);
+   
   if(!digitalRead(52)==1){
-    targetRotation=escribir(getRawRotation());
+    escribir(mag());
+    Set=getRawRotation();
   }
   if(!digitalRead(2)==1){
     myIMU.softReset();  
