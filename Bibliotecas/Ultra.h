@@ -15,9 +15,12 @@
 class Ultra
 {
   public:
-
+    //Trigger Echo
+    Ultra(int trig, int echo);
+    int cm();
   private:
-
+    int _trig;
+    int _echo;
 };
 
 #endif
