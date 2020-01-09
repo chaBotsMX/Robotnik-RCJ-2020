@@ -10,7 +10,7 @@
 #include "Arduino.h"
 #include "Ultra.h"
 
-Ultra(int trig, int echo){
+Ultra::Ultra(int trig, int echo){
   _trig=trig;
   _echo=echo;
   pinMode(echo, INPUT);
