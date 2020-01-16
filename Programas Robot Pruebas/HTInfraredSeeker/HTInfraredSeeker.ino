@@ -1,4 +1,4 @@
-#include <HTInfraredSeeker.h>
+#include "HTInfraredSeeker.h"
 #include <Wire.h>
 
 int DirectionAngle(byte Direction){
