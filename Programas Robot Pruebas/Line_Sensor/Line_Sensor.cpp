@@ -11,14 +11,13 @@
 #include "Line_Sensor.h"
 
 Line_Sensor::Line_Sensor(int port[], int umbral) {
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i <=2; i++)
 		_port[i] = port[i];
 	_umbral = umbral;
 }
 
 bool Line_Sensor::isLine() {
-
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i <=2; i++)
 		if (analogRead(_port[i]) >= _umbral)
 			return true;
 	return false;
