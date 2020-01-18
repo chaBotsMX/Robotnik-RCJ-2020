@@ -11,8 +11,8 @@ void setup() {
   Serial.begin(9600);
   analogReadResolution(12);
   pixels.begin();
-  for(int i=0; i<NUMPIXELS; i++) { //BGR
-    pixels.setPixelColor(i, pixels.Color(128, 255, 0));
+  for(int i=0; i<NUMPIXELS; i++) { //GRB
+    pixels.setPixelColor(i, pixels.Color(0, 50, 50));
     pixels.show();   // Send the updated pixe colors to the hardware.
 	}
 }
@@ -37,5 +37,5 @@ void loop() {
   Serial.print("\t");
   Serial.print(analogRead(A2));
   Serial.print("\n");  
-*/  Serial.println(isLine());
+ */ Serial.println(isLine());
 }
