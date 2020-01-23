@@ -12,16 +12,16 @@ int lectura(){
   const unsigned long startTime_us = micros();
     do {
             if(!digitalRead(7) ) {
-                Serial.println(1);
+                count++;
             }
-            else
-              Serial.println(0);
         
     } while((micros() - startTime_us) < timeLimit);
+  return count;
 }
 
 void loop() {
   if(millis()>readLimit){
-    lectura();
+    Serial.println(lectura());
+    count=0;
   }
 }
