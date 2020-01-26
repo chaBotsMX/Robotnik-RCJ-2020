@@ -27,7 +27,7 @@ double getFilter(double rot){
   if(rt<=180)
     return rt/180.0;
   return (rt-360)/180.0;
-}
+} 
 
 double error(double rot){
     double err=360.00-rot;
@@ -105,8 +105,8 @@ void setup() {
   pinMode(2,INPUT_PULLUP);
  //7 pinMode(5,OUTPUT);
 
-pinMode(49, OUTPUT); //pin como salida
-  pinMode(47, INPUT);  //pin como entrada
+pinMode(49, OUTPUT); //pin como salidatrig
+  pinMode(47, INPUT);  //pin como entradaecho
   //pinMode(2,OUTPUT);
   digitalWrite(49, LOW);//Inicializamos el pin con 0
   
@@ -144,7 +144,7 @@ void loop() {
   double imu=error(erro);
   int pelota=IR.angleDirection600hz();
     
-  if(us_1<=15||us_2<=15){
+  if(us_1<=50||us_2<=50){
     angle=us_1 >= us_2 ? 360.00-(ultimo+5) :  ultimo+5;
     angle>=180 ? ultimo=360-angle : ultimo=angle;
   

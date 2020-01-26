@@ -119,7 +119,7 @@ void loop() {
   
   double imu=error(erro);
   
-  if(angle<=355&&angle>=5){
+  if(angle<=350&&angle>=10){
   angle>=180 ? x=1 : x=0; 
   angle>=180 ? angle=360.00-angle : angle=angle;
   double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
@@ -128,7 +128,8 @@ void loop() {
     angle=180.00-(180.00-angle-d);
   else
     angle=180.00+(180.00-angle-d);
-  }
+  }else
+    angle=0;
   
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
@@ -141,9 +142,9 @@ void loop() {
     
   float valor=(imu/180.00*255);
   
-  float a=cos((angle-(30))*M_PI/180)*150;
-  float b=cos((angle+30)*M_PI/180)*150;
-  float c=-cos((angle-90)*M_PI/180)*150;    
+  float a=cos((angle-(30))*M_PI/180)*125;
+  float b=cos((angle+30)*M_PI/180)*125;
+  float c=-cos((angle-90)*M_PI/180)*125;    
     
   mot.set(valor+a,1);
   mot.set(valor+b,2);
