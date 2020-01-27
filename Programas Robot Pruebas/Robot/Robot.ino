@@ -102,6 +102,7 @@ void setup() {
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
   pinMode(2,INPUT_PULLUP);
+  delay(20);
  //7 pinMode(5,OUTPUT);
 }
 

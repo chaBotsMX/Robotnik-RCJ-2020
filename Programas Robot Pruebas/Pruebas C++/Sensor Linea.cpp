@@ -7,7 +7,9 @@ int sensorY[]={0,1,0,-1};
 int mov[]={180,270,0,90};
 bool sensor[3];
 int contador=0;
-
+/*
+    Procesar mientras esta en linea
+*/
 int main(){
     int angle=0;
     int sumax=0;
@@ -18,12 +20,8 @@ int main(){
     sensor[1]>0 ?  sumay = sumay + sensorY[1] : sumax= sumax + sensorX[1]; // 90
     sensor[2]>0 ?  sumax = sumax + sensorX[2] : sumay= sumay + sensorY[2]; // 180
     sensor[3]>0 ?  sumay = sumay + sensorY[3] : sumax= sumax + sensorX[3]; // 270
-    cout<<sumax<<"\t"<<sumay<<"\n";
     if(sumax!=0&&sumay!=0){
-        cout<<sumay/sumax<<"\t";
         angle=atan((sumay/sumax))*180.00/M_PI;
-        cout<<angle<<"\t";
-        //angle > 0 ? angle=angle+180: angle = angle + 180;
         if(angle<0){
             if(sensor[1])
                 angle=angle+360;
@@ -44,7 +42,6 @@ int main(){
                 }
             }
     }
-    cout<<angle<<"\t";
     if(contador==3){
         if(angle==360||angle==540)
             angle=angle-360;
