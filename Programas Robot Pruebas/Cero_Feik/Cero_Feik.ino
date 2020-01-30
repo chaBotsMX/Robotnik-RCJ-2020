@@ -72,13 +72,24 @@ double getRotation(){
 
 
 void setup() {
+  bool im;
   Serial.begin(9600);  
   Wire.begin();
-  myIMU.begin();
-  myIMU.enableRotationVector(50);
-  myIMU.enableMagnetometer(50);
-  targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
-  Set=getRawRotation()+(targetRotation-getRotation());
+  Wire.setClock(400000); //Increase I2C data rate to 400kHz
+  im=myIMU.begin();
+  if (!im)
+  {
+    Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
+    while (1);
+  }
+  else 
+    myIMU.softReset();
+  if(im){
+    myIMU.enableRotationVector(50);
+    myIMU.enableMagnetometer(50);
+    targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
+    Set=getRawRotation()+(targetRotation-getRotation());
+  }
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
   delay(20); //CAMBIAR A MILLIS
@@ -86,27 +97,32 @@ void setup() {
 
 
 double escribir(double alineacion){
+  targetRotation=alineacion;
   alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
-  if(alineacion>255){
+  if(alineacion>=255){
     dueFlashStorage.write(0,255);
     dueFlashStorage.write(1,alineacion-255);
   }
   else {
-    dueFlashStorage.write(0,0);
-    dueFlashStorage.write(1,alineacion);
+    dueFlashStorage.write(0,alineacion);
+    dueFlashStorage.write(1,0);
   } 
 }
-  
+double magn;  
 void loop() {
+  magn=mag();
   double erro = getRawRotation() - Set;
   
   erro < 0 ? erro= 360.00+erro : erro=erro;  
   
   if(!digitalRead(52)==1){
-    escribir(mag());
+    escribir(magn);
     Set=getRawRotation();
   }  
   
+  Serial.print(magn);
+  Serial.print("\t");
+
   Serial.print(Set);
   Serial.print("\t");
 

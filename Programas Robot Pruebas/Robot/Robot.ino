@@ -1,14 +1,15 @@
-#include "SparkFun_BNO080_Arduino_Library.h"
 #include <Wire.h>
 #include <DueFlashStorage.h>
 #include "IRLocator360.h"
 #include "Motor.h"
+#include "SparkFun_BNO080_Arduino_Library.h"
 #define in 120
 #define inn 14400
 //3537
 int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
-int pwm[]={0,8,7,6};
+int pwm[]={0,8,7,6};  
+int vel=125;
 
 const int magx = 10;
 const int magy = 5;
@@ -87,7 +88,6 @@ double escribir(double alineacion){
   } 
 }
 
-
 void setup() {
   Serial.begin(9600);  
   Wire.begin();
@@ -110,7 +110,7 @@ void loop() {
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
-  /*if(angle>=10||angle<=180)
+  /*if(angle>=10||angle<=180)z
     angle=angle+10;
   else if(angle>180||angle<=350)
     angle=angle-10;*/
@@ -121,16 +121,19 @@ void loop() {
   double imu=error(erro);
   
   if(angle<=350&&angle>=10){
-  angle>=180 ? x=1 : x=0; 
-  angle>=180 ? angle=360.00-angle : angle=angle;
-  double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
-  double d=asin(((intensidad*sin(angle*M_PI/180.00))/t))*180.00/M_PI;
-  if(!x)
-    angle=180.00-(180.00-angle-d);
-  else
-    angle=180.00+(180.00-angle-d);
-  }else
+    angle>=180 ? x=1 : x=0; 
+    angle>=180 ? angle=360.00-angle : angle=angle;
+    double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
+    double d=asin(((intensidad*sin(angle*M_PI/180.00))/t))*180.00/M_PI;
+    if(!x)
+      angle=180.00-(180.00-angle-d);
+    else
+      angle=180.00+(180.00-angle-d);
+  } 
+  else{ if(angle==0)
+    vel==150;
     angle=0;
+  }
   
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
@@ -143,9 +146,9 @@ void loop() {
     
   float valor=(imu/180.00*255);
   
-  float a=cos((angle-(30))*M_PI/180)*125;
-  float b=cos((angle+30)*M_PI/180)*125;
-  float c=-cos((angle-90)*M_PI/180)*125;    
+  float a=cos((angle-(30))*M_PI/180)*vel;
+  float b=cos((angle+30)*M_PI/180)*vel;
+  float c=-cos((angle-90)*M_PI/180)*vel;    
     
   mot.set(valor+a,1);
   mot.set(valor+b,2);
