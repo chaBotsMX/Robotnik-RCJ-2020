@@ -19,6 +19,8 @@ class Motor
     void set(float a, byte n);
     void move(int angle, double error);
     void alineacion(double error);
+    void off();
+    void SetOff(float a, byte n);
     //void alineacion(); //return kp para moverme
     /*void alineacionxd(float error);
     void test();*/

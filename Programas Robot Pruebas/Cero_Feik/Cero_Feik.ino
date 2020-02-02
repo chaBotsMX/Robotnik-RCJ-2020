@@ -6,8 +6,8 @@ int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
 int pwm[]={0,8,7,6};
 
-const int magx = 10;
-const int magy = 5;
+const int magx = -99;
+const int magy = -134;
 
 double targetRotation=0.0;
 BNO080 myIMU;
@@ -74,21 +74,19 @@ double getRotation(){
 void setup() {
   bool im;
   Serial.begin(9600);  
+
+  Serial.println("-----------------------------------");
   Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
-  im=myIMU.begin();
-  if (!im)
-  {
-    Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
-    while (1);
-  }
-  else 
-    myIMU.softReset();
-  if(im){
-    myIMU.enableRotationVector(50);
-    myIMU.enableMagnetometer(50);
-    targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
-    Set=getRawRotation()+(targetRotation-getRotation());
+  myIMU.begin();
+  myIMU.enableRotationVector(50);
+  myIMU.enableMagnetometer(50);
+  while(millis()<600){
+    targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
+    Serial.print(targetRotation);
+    Serial.print("\t");
+    Serial.println(mag());
+    Set=getRawRotation()+(targetRotation-mag());
+    delay(20);
   }
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
@@ -96,28 +94,26 @@ void setup() {
 }
 
 
-double escribir(double alineacion){
-  targetRotation=alineacion;
-  alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
-  if(alineacion>=255){
-    dueFlashStorage.write(0,255);
-    dueFlashStorage.write(1,alineacion-255);
-  }
-  else {
-    dueFlashStorage.write(0,alineacion);
-    dueFlashStorage.write(1,0);
-  } 
+double escribir(int alineacion){
+  dueFlashStorage.write(3, alineacion%255);
+  dueFlashStorage.write(4, alineacion/255);
+  delay(50);
 }
+
 double magn;  
 void loop() {
   magn=mag();
   double erro = getRawRotation() - Set;
   
-  erro < 0 ? erro= 360.00+erro : erro=erro;  
+  erro < 0 ? erro = 360.00 + erro : erro=erro;  
   
   if(!digitalRead(52)==1){
+    magn > 0 ? magn=magn : magn=360.00+magn;
+    Serial.println(magn);
     escribir(magn);
+    
     Set=getRawRotation();
+    //Serial.println(magn);
   }  
   
   Serial.print(magn);
@@ -132,4 +128,5 @@ void loop() {
   Serial.print(targetRotation);
   Serial.print("\t");
   Serial.println(erro);
+  delay(20);
 }

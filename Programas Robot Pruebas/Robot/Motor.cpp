@@ -44,3 +44,15 @@ void Motor::alineacion(double error){
   for(int i=1; i<=3; i++)
     set(valor, i);
 }
+
+void Motor::SetOff(float a, byte n){
+  bool dir=1;
+  digitalWrite(_ina[n], dir);
+  digitalWrite(_inb[n], dir);
+  analogWrite(_pwm[n], min(abs(a),255));
+}
+
+void Motor::off(){
+  for(int i=1; i<=3; i++)
+    SetOff(255, i);
+}

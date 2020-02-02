@@ -6,15 +6,15 @@
 #define in 120
 #define inn 14400
 //3537
-int ina[]={0,3,35,30};
-int inb[]={0,14,37,32};
+int ina[]={0,14,35,30};
+int inb[]={0,3,37,32};
 int pwm[]={0,8,7,6};  
 int vel=125;
 
-const int magx = 10;
-const int magy = 5;
+const int magx = -99;
+const int magy = -134;
 
-Motor mot(ina,inb,pwm,255,255);
+Motor mot(ina,inb,pwm,300,300);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
 
@@ -76,18 +76,12 @@ double getRotation(){
   return rt;
 }
 
-double escribir(double alineacion){
-  targetRotation=alineacion;
-  alineacion > 0 ? alineacion=alineacion : alineacion=360.00+alineacion;
-  if(alineacion>=255){
-    dueFlashStorage.write(0,255);
-    dueFlashStorage.write(1,alineacion-255);
-  }
-  else {
-    dueFlashStorage.write(0,alineacion);
-    dueFlashStorage.write(1,0);
-  } 
+double escribir(int alineacion){
+  dueFlashStorage.write(3, alineacion%255);
+  dueFlashStorage.write(4, alineacion/255);
+  delay(50);
 }
+
 double magn;
 bool im;
 void setup() {
@@ -96,8 +90,11 @@ void setup() {
   myIMU.begin();
   myIMU.enableRotationVector(50);
   myIMU.enableMagnetometer(50);
-  targetRotation=dueFlashStorage.read(0)+dueFlashStorage.read(1);
-  Set=getRawRotation()+(targetRotation-getRotation());  
+  targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
+  while(millis()<600){
+    Set=getRawRotation()+(targetRotation-mag());
+    delay(20);
+  }  
   IR.sensorInitialization();
   pinMode(9,OUTPUT);
   pinMode(52,INPUT_PULLUP);
@@ -107,7 +104,7 @@ void setup() {
 }
 
 void loop() {
-  
+  magn=mag();
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
@@ -142,13 +139,13 @@ void loop() {
   //Serial.println(erro);
   
     
-  float valor=(imu/180.00*255);
+  float valor=(imu/180.00*300);
   
   float a=cos((angle-(30))*M_PI/180)*vel;
   float b=cos((angle+30)*M_PI/180)*vel;
   float c=-cos((angle-90)*M_PI/180)*vel;    
     
-  mot.set(valor+a,1);
+  mot.set(valor-a,1);
   mot.set(valor+b,2);
   mot.set(valor-c,3);
   
@@ -167,10 +164,16 @@ void loop() {
   Serial.println(imu);
    
   if(!digitalRead(52)==1){
-    escribir(mag());
+    magn > 0 ? magn=magn : magn=360.00+magn;
+    Serial.println(magn);
+    escribir(magn);
+    
     Set=getRawRotation();
-  }
+    mot.off(255);
+    //Serial.println(magn);
+  }  
   if(!digitalRead(2)==1){
     myIMU.softReset();  
   }
+  delay(20);
 }

@@ -2,8 +2,8 @@
 #include <Wire.h>
 #include <DueFlashStorage.h>
 
-const int magx = 10;
-const int magy = 5;
+const int magx = -99;
+const int magy = -134;
 
 double targetRotation=0.0;
 BNO080 myIMU;
