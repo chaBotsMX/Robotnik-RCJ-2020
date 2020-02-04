@@ -3,8 +3,8 @@
 #include "IRLocator360.h"
 #include "Motor.h"
 #include "SparkFun_BNO080_Arduino_Library.h"
-#define in 120
-#define inn 14400
+#define in 140
+#define inn 19600
 //3537
 int ina[]={0,14,35,30};
 int inb[]={0,3,37,32};
@@ -14,7 +14,7 @@ int vel=125;
 const int magx = -99;
 const int magy = -134;
 
-Motor mot(ina,inb,pwm,300,300);
+Motor mot(ina,inb,pwm,255,255);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
 
@@ -104,7 +104,7 @@ void setup() {
 }
 
 void loop() {
-  magn=mag();
+  
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
@@ -117,8 +117,10 @@ void loop() {
   erro < 0 ? erro= 360.00+erro : erro=erro;  
   
   double imu=error(erro);
+  Serial.print(angle);
+  Serial.print("\t");
   if(angle<=360){
-    if(angle<=350&&angle>=10){
+    if(angle<=335&&angle>=10){
       angle>=180 ? x=1 : x=0; 
       angle>=180 ? angle=360.00-angle : angle=angle;
       double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
@@ -127,19 +129,21 @@ void loop() {
         angle=180.00-(180.00-angle-d);
       else
         angle=180.00+(180.00-angle-d);
+        
     } 
     else{ 
       if(angle==0)
-        vel==150;
+        vel=150;
       angle=0;
     }
-  
+  Serial.print(angle);
+  Serial.print("\t");
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
   //Serial.println(erro);
   
     
-  float valor=(imu/180.00*300);
+  float valor=(imu/180.00*255);
   
   float a=cos((angle-(30))*M_PI/180)*vel;
   float b=cos((angle+30)*M_PI/180)*vel;
@@ -161,15 +165,18 @@ void loop() {
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
+  Serial.print(angle);
+  Serial.print("\t");
   Serial.println(imu);
    
   if(!digitalRead(52)==1){
+    magn=mag();
     magn > 0 ? magn=magn : magn=360.00+magn;
     Serial.println(magn);
     escribir(magn);
     
     Set=getRawRotation();
-    mot.off(255);
+    mot.off();
     //Serial.println(magn);
   }  
   if(!digitalRead(2)==1){

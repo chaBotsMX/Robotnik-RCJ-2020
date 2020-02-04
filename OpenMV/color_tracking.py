@@ -12,7 +12,7 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
 #sensor.set_auto_gain(True,gain_db_ceiling = 13.0) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False,(-2.40891, -6.02073, -4.30291)) # must be turned off for color tracking
+sensor.set_auto_whitebal(False, (-2.589813, -6.02073, -5.623446)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
 
