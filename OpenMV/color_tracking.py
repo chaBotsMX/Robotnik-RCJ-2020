@@ -12,12 +12,12 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
 #sensor.set_auto_gain(True,gain_db_ceiling = 13.0) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False,(-3.555992, -6.02073, -1.476391)) # must be turned off for color tracking
+sensor.set_auto_whitebal(False,(-2.40891, -6.02073, -4.30291)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
 
 # Capture the color thresholds for whatever was in the center of the image.
-r = [(320//2)-(50//2), (240//2)-(50//2), 70, 70] # 50x50 center of QVGA.
+r = [(320//2)-(50//2), (240//3)-(50//3), 40, 40] # 50x50 center of QVGA.
 
 print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
 print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
@@ -26,8 +26,9 @@ for i in range(60):
     img.draw_rectangle(r)
 
 print("Learning thresholds...")
+
 threshold = [50, 50, 0, 0, 0, 0] # Middle L, A, B values.
-"""for i in range(80):
+for i in range(80):
     img = sensor.snapshot()
     hist = img.get_histogram(roi=r)
     lo = hist.get_percentile(0.01) # Get the CDF of the histogram at the 1% range (ADJUST AS NECESSARY)!
@@ -46,20 +47,20 @@ threshold = [50, 50, 0, 0, 0, 0] # Middle L, A, B values.
 
 print("Thresholds learned...")
 print("Tracking colors...")
-print(threshold)"""
-threshold = [54, 81, -15, 3, -40, -26]
 
+#threshold = [58, 74, 28, 65, 59, 71]
+print(threshold)
 while(True):
     clock.tick()
     img = sensor.snapshot()
     led.off()
     img.draw_line(160,0,160,240, color=(0,255,0))
-    for blob in img.find_blobs([threshold], pixels_threshold=250, area_threshold=250, merge=True, margin=20):
+    for blob in img.find_blobs([threshold], pixels_threshold=100, area_threshold=100, merge=True, margin=5):
         img.draw_rectangle(blob.rect())
         img.draw_cross(blob.cx(), blob.cy())
-        angle= int(blob.cx()*.40625)
+        angle= int((blob.cx()-160)*.22123)
         img.draw_line(160,240,blob.cx(),blob.cy(), color=(255,0,0))
-        print(angle-70)
+        print(angle)
         led.on()
 
 
