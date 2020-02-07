@@ -102,39 +102,31 @@ void setup() {
   pinMode(2,INPUT_PULLUP);
   pinMode(13,INPUT_PULLUP);
   delay(20);
- //7 pinMode(5,OUTPUT);
 }
+
 float alin=180.00;
 int vela=255;
 float a,b,c;
+
 void loop() {
-  
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
-  /*if(angle>=10||angle<=180)z
-    angle=angle+10;
-  else if(angle>180||angle<=350)
-    angle=angle-10;*/
+  
   double erro = getRawRotation() - Set;
   
   erro < 0 ? erro= 360.00+erro : erro=erro;  
   
   double imu=error(erro);
-  Serial.print(angle);
-  Serial.print("\t");
-
   
-  if(angle>=340||angle<=10){
-    
-    imu=imu+40;
+  if(angle>=340||angle<=10){    
+    imu=imu+10;
     vela=200;
-    digitalWrite(5,LOW);
     angle=0;
-       a=cos((angle-(30))*M_PI/180)*vel;
-       b=cos((angle+30)*M_PI/180)*vel;
-      c=-cos((angle-90)*M_PI/180)*vel;    
-
+    a=cos((angle-(30))*M_PI/180)*vel;
+    b=cos((angle+30)*M_PI/180)*vel;
+    c=-cos((angle-90)*M_PI/180)*vel;    
+    digitalWrite(5,LOW);
   }
   else{
     a=0;
@@ -142,37 +134,22 @@ void loop() {
     c=0;
     vela=255;
     digitalWrite(5,HIGH);
-    Serial.println("ÄAAAAAAAAAAAAAAAA");
   }
 
-  
-    float valor=(imu/alin*vela);
+  float valor=(imu/alin*vela);
   mot.set(valor-a,1);
   mot.set(valor+b,2);
   mot.set(valor-c,3);
-  
-  
+    
   if(imu>=-5&&imu<=5)
     digitalWrite(9,HIGH);
   else
     digitalWrite(9,LOW);
 
-  //mot.alineacion(erro);  
-//  float valor=(erro/180.00*200);
-  //for(int i=1; i<=3; i++)
-    //mot.set(valor, i);
-   Serial.print(vela);
-  Serial.print("\t");
-  Serial.print(angle);
-  Serial.print("\t");
-  Serial.println(imu);
-   
   if(!digitalRead(52)==1){
     magn=mag();
     magn > 0 ? magn=magn : magn=360.00+magn;
-    Serial.println(magn);
     escribir(magn);
-    
     Set=getRawRotation();
     mot.off();
   }  
