@@ -3,18 +3,18 @@
 #include "IRLocator360.h"
 #include "Motor.h"
 #include "SparkFun_BNO080_Arduino_Library.h"
-#define in 140
-#define inn 19600
+#define in 150
+#define inn 22500
 //3537
 int ina[]={0,14,35,30};
 int inb[]={0,3,37,32};
 int pwm[]={0,8,7,6};  
-int vel=125;
+int vel=100;
 
 const int magx = -99;
 const int magy = -134;
 
-Motor mot(ina,inb,pwm,255,255);
+Motor mot(ina,inb,pwm,150,150);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
 
@@ -143,7 +143,7 @@ void loop() {
   //Serial.println(erro);
   
     
-  float valor=(imu/180.00*255);
+  float valor=(imu/180.00*200);
   
   float a=cos((angle-(30))*M_PI/180)*vel;
   float b=cos((angle+30)*M_PI/180)*vel;
@@ -165,6 +165,8 @@ void loop() {
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
+     Serial.print(intensidad);
+  Serial.print("\t");
   Serial.print(angle);
   Serial.print("\t");
   Serial.println(imu);
