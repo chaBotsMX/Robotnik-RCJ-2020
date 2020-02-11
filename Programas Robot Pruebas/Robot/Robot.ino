@@ -14,7 +14,7 @@ int vel=100;
 const int magx = -99;
 const int magy = -134;
 
-Motor mot(ina,inb,pwm,150,150);
+Motor mot(ina,inb,pwm,225,225);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
 
@@ -141,9 +141,8 @@ void loop() {
   //Serial.println(error(getRotation()));
   //Serial.println(getFilter(360.00-getRotation()));
   //Serial.println(erro);
-  
     
-  float valor=(imu/180.00*200);
+  float valor=(imu/180.00*225);
   
   float a=cos((angle-(30))*M_PI/180)*vel;
   float b=cos((angle+30)*M_PI/180)*vel;
@@ -165,6 +164,7 @@ void loop() {
 //  float valor=(erro/180.00*200);
   //for(int i=1; i<=3; i++)
     //mot.set(valor, i);
+    
      Serial.print(intensidad);
   Serial.print("\t");
   Serial.print(angle);
