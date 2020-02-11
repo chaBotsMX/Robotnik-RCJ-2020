@@ -12,12 +12,12 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
 #sensor.set_auto_gain(True,gain_db_ceiling = 13.0) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False, (-2.589813, -6.02073, -5.623446)) # must be turned off for color tracking
+sensor.set_auto_whitebal(False,  (-3.059389, -6.02073, -6.02073)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
 
 # Capture the color thresholds for whatever was in the center of the image.
-r = [(320//2)-(50//2), (240//3)-(50//3), 40, 40] # 50x50 center of QVGA.
+r = [(320//2)-(50//2), (240//2)-(50//3), 20, 20] # 50x50 center of QVGA.
 
 print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
 print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
