@@ -11,6 +11,7 @@
 #include "Line_Sensor.h"
 
 Line_Sensor::Line_Sensor(int port[], int umbral) {
+  analogReadResolution(12);
   for (int i = 0; i <=2; i++)
 		_port[i] = port[i];
 	_umbral = umbral;

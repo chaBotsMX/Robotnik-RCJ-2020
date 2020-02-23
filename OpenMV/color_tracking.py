@@ -12,25 +12,29 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
 #sensor.set_auto_gain(True,gain_db_ceiling = 13.0) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False,  (-3.059389, -6.02073, -6.02073)) # must be turned off for color tracking
+sensor.set_auto_whitebal(False,  (-1.317097, -6.02073, -4.415059)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
+led2 = pyb.LED(2)
 
 # Capture the color thresholds for whatever was in the center of the image.
-r = [(320//2)-(50//2), (240//2)-(50//3), 20, 20] # 50x50 center of QVGA.
+rsi = [(320//6)-(20//6), (240//6)-(20//6), 50, 20] # izquierda
+rsd = [((320//6)*5)-((20//6)*5), ((240//6))-((20//6)), 50, 20] #derecha
+rsc = [((320//8)*4)-((20//8)*4), ((240//22))-((20//22)), 50, 20] #centro
 
 print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
 print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
-for i in range(60):
+for i in range(30):
     img = sensor.snapshot()
-    img.draw_rectangle(r)
+    img.draw_rectangle(rsc)
 
 print("Learning thresholds...")
 
 threshold = [50, 50, 0, 0, 0, 0] # Middle L, A, B values.
-for i in range(80):
+#centro
+for i in range(30):
     img = sensor.snapshot()
-    hist = img.get_histogram(roi=r)
+    hist = img.get_histogram(roi=rsc)
     lo = hist.get_percentile(0.01) # Get the CDF of the histogram at the 1% range (ADJUST AS NECESSARY)!
     hi = hist.get_percentile(0.99) # Get the CDF of the histogram at the 99% range (ADJUST AS NECESSARY)!
     # Average in percentile values.
@@ -43,7 +47,61 @@ for i in range(80):
     for blob in img.find_blobs([threshold], pixels_threshold=200, area_threshold=200, merge=True, margin=20):
         img.draw_rectangle(blob.rect())
         img.draw_cross(blob.cx(), blob.cy())
-        img.draw_rectangle(r)
+        img.draw_rectangle(rsc)
+
+for i in range(30):
+    img = sensor.snapshot()
+    img.draw_rectangle(rsi)
+
+led2.on()
+time.sleep(1250)
+led2.off()
+#izquierda
+for i in range(30):
+    img = sensor.snapshot()
+    hist = img.get_histogram(roi=rsi)
+    lo = hist.get_percentile(0.01) # Get the CDF of the histogram at the 1% range (ADJUST AS NECESSARY)!
+    hi = hist.get_percentile(0.99) # Get the CDF of the histogram at the 99% range (ADJUST AS NECESSARY)!
+    # Average in percentile values.
+    threshold[0] = (threshold[0] + lo.l_value()) // 2
+    threshold[1] = (threshold[1] + hi.l_value()) // 2
+    threshold[2] = (threshold[2] + lo.a_value()) // 2
+    threshold[3] = (threshold[3] + hi.a_value()) // 2
+    threshold[4] = (threshold[4] + lo.b_value()) // 2
+    threshold[5] = (threshold[5] + hi.b_value()) // 2
+    for blob in img.find_blobs([threshold], pixels_threshold=200, area_threshold=200, merge=True, margin=20):
+        img.draw_rectangle(blob.rect())
+        img.draw_cross(blob.cx(), blob.cy())
+        img.draw_rectangle(rsi)
+
+for i in range(30):
+    img = sensor.snapshot()
+    img.draw_rectangle(rsd)
+
+led2.on()
+time.sleep(1250)
+led2.off()
+#derecha
+for i in range(30):
+    img = sensor.snapshot()
+    hist = img.get_histogram(roi=rsd)
+    lo = hist.get_percentile(0.01) # Get the CDF of the histogram at the 1% range (ADJUST AS NECESSARY)!
+    hi = hist.get_percentile(0.99) # Get the CDF of the histogram at the 99% range (ADJUST AS NECESSARY)!
+    # Average in percentile values.
+    threshold[0] = (threshold[0] + lo.l_value()) // 2
+    threshold[1] = (threshold[1] + hi.l_value()) // 2
+    threshold[2] = (threshold[2] + lo.a_value()) // 2
+    threshold[3] = (threshold[3] + hi.a_value()) // 2
+    threshold[4] = (threshold[4] + lo.b_value()) // 2
+    threshold[5] = (threshold[5] + hi.b_value()) // 2
+    for blob in img.find_blobs([threshold], pixels_threshold=200, area_threshold=200, merge=True, margin=20):
+        img.draw_rectangle(blob.rect())
+        img.draw_cross(blob.cx(), blob.cy())
+        img.draw_rectangle(rsd)
+
+led2.on()
+time.sleep(100)
+led2.off()
 
 print("Thresholds learned...")
 print("Tracking colors...")
@@ -53,8 +111,8 @@ print(threshold)
 while(True):
     clock.tick()
     img = sensor.snapshot()
-    led.off()
     img.draw_line(160,0,160,240, color=(0,255,0))
+    led.off()
     for blob in img.find_blobs([threshold], pixels_threshold=100, area_threshold=100, merge=True, margin=5):
         img.draw_rectangle(blob.rect())
         img.draw_cross(blob.cx(), blob.cy())

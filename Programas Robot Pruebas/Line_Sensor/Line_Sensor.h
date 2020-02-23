@@ -20,8 +20,6 @@ class Line_Sensor{
 		Line_Sensor(int port[], int umbral);
 		bool isLine();
 		void SensorValue();
-	//	void setColor(byte r, byte g, byte b);
-		//void itsMomentToFun(byte r, byte g, byte b);
 	private:
 		int _umbral;
 		byte _port[];
