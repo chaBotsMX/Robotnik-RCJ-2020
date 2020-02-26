@@ -4,31 +4,31 @@
 
 import sensor, image, time, math
 import pyb
-print("Letting auto algorithms run. Don't put anything in front of the camera!")
+#print("Letting auto algorithms run. Don't put anything in front of the camera!")
 
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
-#sensor.set_auto_gain(True,gain_db_ceiling = 13.0) # must be turned off for color tracking
+sensor.set_auto_gain(False,gain_db_ceiling = 10.880774) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False,  (-1.317097, -6.02073, -4.415059)) # must be turned off for color tracking
+#sensor.set_auto_whitebal(False,  (-0.06828868, -6.02073, -5.119987)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
 led2 = pyb.LED(2)
 
 # Capture the color thresholds for whatever was in the center of the image.
-rsi = [(320//6)-(20//6), (240//6)-(20//6), 50, 20] # izquierda
-rsd = [((320//6)*5)-((20//6)*5), ((240//6))-((20//6)), 50, 20] #derecha
-rsc = [((320//8)*4)-((20//8)*4), ((240//22))-((20//22)), 50, 20] #centro
+rsi = [(320//6)-(50//2), (240//6)-(20//2), 50, 20] # izquierda
+rsd = [((320//6)*5)-((50//2)), ((240//6))-((20//2)), 50, 20] #derecha
+rsc = [((320//8)*4)-((50//2)), ((240//24))-((20//2)), 50, 20] #centro
 
-print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
-print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
+#print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
+#print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
 for i in range(30):
     img = sensor.snapshot()
     img.draw_rectangle(rsc)
 
-print("Learning thresholds...")
+#print("Learning thresholds...")
 
 threshold = [50, 50, 0, 0, 0, 0] # Middle L, A, B values.
 #centro
@@ -54,6 +54,7 @@ for i in range(30):
     img.draw_rectangle(rsi)
 
 led2.on()
+print("cambio")
 time.sleep(1250)
 led2.off()
 #izquierda
@@ -79,6 +80,7 @@ for i in range(30):
     img.draw_rectangle(rsd)
 
 led2.on()
+print("cambio")
 time.sleep(1250)
 led2.off()
 #derecha
@@ -103,8 +105,8 @@ led2.on()
 time.sleep(100)
 led2.off()
 
-print("Thresholds learned...")
-print("Tracking colors...")
+#print("Thresholds learned...")
+#print("Tracking colors...")
 
 #threshold = [58, 74, 28, 65, 59, 71]
 print(threshold)

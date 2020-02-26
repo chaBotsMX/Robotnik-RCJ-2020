@@ -28,21 +28,28 @@ int main(){
             else
                 angle=angle+180;
         }
-        else
+        else{
            angle=angle+180;
+
+        }
     }
     else{
-        if(sumax==0&&sumay==0)
+        if(sumax==0&&sumay==0){
             angle=180;
-        else
+            cout<<"ENTRE";
+        }
+        else{
             for(int i=0; i<=3; i++){
                 if(sensor[i]){
                     angle=angle+mov[i];
                     contador++;
                 }
             }
+            cout<<"ENTRE4";
+        }
     }
     if(contador==3){
+            cout<<"ENTRE";
         if(angle==360||angle==540)
             angle=angle-360;
         else
