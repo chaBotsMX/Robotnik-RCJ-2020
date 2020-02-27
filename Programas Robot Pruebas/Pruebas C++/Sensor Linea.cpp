@@ -29,14 +29,12 @@ int main(){
                 angle=angle+180;
         }
         else{
-           angle=angle+180;
-
+           if(sumax!=-1&&sumay!=-1)angle=angle+180;
         }
     }
     else{
         if(sumax==0&&sumay==0){
             angle=180;
-            cout<<"ENTRE";
         }
         else{
             for(int i=0; i<=3; i++){
@@ -45,15 +43,13 @@ int main(){
                     contador++;
                 }
             }
-            cout<<"ENTRE4";
         }
     }
     if(contador==3){
-            cout<<"ENTRE";
         if(angle==360||angle==540)
             angle=angle-360;
         else
-                angle=angle-180;
+            angle=angle-180;
     }
     cout<<angle;
 }
