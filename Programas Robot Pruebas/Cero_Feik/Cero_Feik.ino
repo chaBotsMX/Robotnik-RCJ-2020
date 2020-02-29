@@ -89,7 +89,7 @@ void setup() {
     delay(20);
   }
   pinMode(9,OUTPUT);
-  pinMode(52,INPUT_PULLUP);
+  pinMode(8,INPUT_PULLUP);
   delay(20); //CAMBIAR A MILLIS
 }
 
@@ -107,7 +107,7 @@ void loop() {
   
   erro < 0 ? erro = 360.00 + erro : erro=erro;  
   
-  if(!digitalRead(52)==1){
+  if(!digitalRead(8)==1){
     magn > 0 ? magn=magn : magn=360.00+magn;
     Serial.println(magn);
     escribir(magn);
