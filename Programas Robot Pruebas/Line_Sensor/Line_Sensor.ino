@@ -1,10 +1,10 @@
 #include "Line_Sensor.h"
-#define umbral 2700
+#define umbral 2750
 #include <Adafruit_NeoPixel.h>
-#define PIN 7
-#define PIN2 6
-#define PIN3 4
-#define PIN4 3
+#define PIN 48
+#define PIN2 52
+#define PIN3 50
+#define PIN4 46
 #define NUMPIXELS 3 
 #define intensidad 50
 int sensorX[]={1,0,-1,0};
@@ -102,7 +102,10 @@ int mov[]={180,270,0,90};
 }
 
 int ports[]={A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
-
+//atras 3\5
+//frente 6/8
+//derehci9/11
+//izquierda 0/2
 bool isLine(int a, int b){
   for(int i=a; i<=b; i++){
     if(analogRead(ports[i])>=umbral)
@@ -113,10 +116,10 @@ bool isLine(int a, int b){
 
 void loop() {
   
-  sensor[0]=isLine(3,5);//bien
-  sensor[1]=isLine(0,2);
-  sensor[2]=isLine(9,11);
-  sensor[3]=isLine(6,8);
+  sensor[0]=isLine(6,8);//bien
+  sensor[1]=isLine(9,11);
+  sensor[2]=isLine(3,5);
+  sensor[3]=isLine(0,2);
   Serial.print(sensor[0]); //ENFRENTE
   Serial.print("\t");
   Serial.print(sensor[1]); //DERECHA
