@@ -3,7 +3,7 @@
 /*                                                                       */
 /****************************CHABOTS ROBOTNIK*****************************/
 /*                                                                       */
-/*Line Sensor V1.0														 */	
+/*Line Sensor V1.0														 */
 /*S.L.P MEXICO                           TIME:10:37:40 PM DATE:10/27/2019*/
 /*************************************************************************/
 
@@ -17,10 +17,9 @@
 
 class Line_Sensor{
 	public:
-		Line_Sensor(byte port[], int umbral);
+		Line_Sensor(int port[], int umbral);
 		bool isLine();
-	//	void setColor(byte r, byte g, byte b);
-		//void itsMomentToFun(byte r, byte g, byte b);
+		void SensorValue();
 	private:
 		int _umbral;
 		byte _port[];
