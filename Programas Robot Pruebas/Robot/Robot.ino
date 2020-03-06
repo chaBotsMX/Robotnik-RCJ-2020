@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <DueFlashStorage.h>
 #include <Adafruit_NeoPixel.h>
+#include "UltrasonicoLib.h"
 #include "IRLocator360.h"
 #include "Motor.h"
 #include "SparkFun_BNO080_Arduino_Library.h"
@@ -14,9 +15,9 @@
 #define PIN3 50
 #define PIN4 46
 #define NUMPIXELS 3 
-const int magx = -99;
-const int magy = -134;
-int vel=100;
+const int magx = -100;
+const int magy = -140;
+int vel=150;
 int contador=0;
 int ina[]={0,36,40,49};
 int inb[]={0,38,42,23};
@@ -25,6 +26,7 @@ int ports[]={A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 int sensorX[]={1,0,-1,0};
 int sensorY[]={0,1,0,-1};
 int mov[]={180,270,0,90};
+unsigned long tiempo1, tiempo2;
 double magn;
 double targetRotation=0.0;
 double Set=0.0;
@@ -39,6 +41,7 @@ DueFlashStorage dueFlashStorage;
 Motor mot(ina,inb,pwm,225,225);
 IRLocator360 IR;
 BNO080 myIMU;
+Ultrasonico br(6,5);
 
 double getFilter(double rot){
   double rt=rot;
@@ -147,6 +150,7 @@ bool isLine(int a, int b){
 }
 
 void setup() {
+  Serial.begin(19200);
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
@@ -173,18 +177,25 @@ void setup() {
     pixel.show(); 
     pixe.show();  
   }
+  tiempo1 = millis();
   pinMode(9,OUTPUT);
   pinMode(10,OUTPUT);
+  pinMode(11,OUTPUT);
   pinMode(8,INPUT_PULLUP);
+  br.PAU();
   delay(20);
 }
 int periodo = 1000;
 unsigned long TiempoAhora = 0;
+unsigned long tiempo = 0;
+float a, b,c,valor;
 void loop() {
-  TiempoAhora = millis();
+  tiempo2 = millis();
+  
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
+  bool banderasl=0;
   double erro = getRawRotation() - Set;
   erro < 0 ? erro= 360.00+erro : erro=erro;  
   sensor[0]=isLine(6,8);//bien
@@ -193,6 +204,8 @@ void loop() {
   sensor[3]=isLine(0,2);
   int sl=angulo();
   double imu=error(erro);
+  valor=(imu/180.00*255);
+     
   if(sl==-1){ 
     if(angle<=360){
       if(angle<=335&&angle>=10){
@@ -206,30 +219,60 @@ void loop() {
          angle=180.00+(180.00-angle-d);
       } 
       else{ 
-        if(angle==0)
+        if(angle>=355||angle<=5&&intensidad>=160){
           vel=125;
+       
+          int us1=br.VCM();
+          if(us1<75){
+            imu=imu+40;
+            Serial.println("Izquierda");
+          }
+          if(us1>=75){
+            imu=imu-40;
+            Serial.println("Derecha");
+          }
+        }
+        valor=(imu/180.00*255);
+     
           angle=0;
       }
+     
+     a=cos((angle-(30))*M_PI/180)*vel;
+     b=cos((angle-90)*M_PI/180)*vel;
+     c=-cos((angle+30)*M_PI/180)*vel; 
     }
-    float valor=(imu/180.00*225);
-    float a=cos((angle-(30))*M_PI/180)*vel;
-    float b=cos((angle-90)*M_PI/180)*vel;
-    float c=-cos((angle+30)*M_PI/180)*vel;    
+    else {
+      a=0;
+      b=0;
+      c=0;    
+    }
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
+    digitalWrite(10,LOW);
+    digitalWrite(11,LOW);
   }
   else{  
-   if(sl!=-1){
-      float valor=(imu/180.00*225);
-      float a=cos((sl-(30))*M_PI/180)*vel;
-      float b=cos((sl-90)*M_PI/180)*vel;
-      float c=-cos((sl+30)*M_PI/180)*vel;    
-      mot.set(valor-a,1);
-      mot.set(valor+b,2);
-      mot.set(valor-c,3);
-    }
-    mot.alineacion(imu);
+    mot.off();
+    angle=sl;
+    
+        while (millis() < tiempo2 + 250){}
+        
+        valor=(imu/180.00*225);
+          
+        a=cos((angle-(30))*M_PI/180)*100;
+        b=cos((angle-90)*M_PI/180)*100;
+        c=-cos((angle+30)*M_PI/180)*100; 
+        mot.set(valor-a,1);
+        mot.set(valor+b,2);
+        mot.set(valor-c,3);
+
+      digitalWrite(11,HIGH); 
+    
+    while (millis() < tiempo2 + 500){}
+        mot.off();
+        digitalWrite(10,HIGH);
+    
   }
   if(imu>=-5&&imu<=5)
     digitalWrite(9,HIGH);
@@ -243,5 +286,6 @@ void loop() {
     Set=getRawRotation();
     mot.off();
   }  
+  Serial.println(intensidad);
   delay(20);
 }
