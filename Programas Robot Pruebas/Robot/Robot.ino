@@ -156,7 +156,7 @@ void setup() {
   myIMU.enableRotationVector(50);
   myIMU.enableMagnetometer(50);
   targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
-  while(millis()<600){
+  while(millis()<1000){
     Set=getRawRotation()+(targetRotation-mag());
     delay(20);
   }  
@@ -164,8 +164,7 @@ void setup() {
   analogReadResolution(12);
   pixels.begin();
   pixel.begin();
-  pixe.begin();
-  pix.begin();
+  pixe.begin();  pix.begin();
   for(int i=0; i<NUMPIXELS; i++) { //GRB
     pixels.setPixelColor(i, pixels.Color(0, 50, 50));
     pixel.setPixelColor(i, pixels.Color(0, 50, 50));
@@ -220,7 +219,7 @@ void loop() {
       } 
       else{ 
         if(angle>=355||angle<=5&&intensidad>=160){
-          vel=125;
+          vel=175;
        
           int us1=br.VCM();
           if(us1<75){
