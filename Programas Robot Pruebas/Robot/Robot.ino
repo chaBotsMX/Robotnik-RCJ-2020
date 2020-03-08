@@ -28,10 +28,14 @@ int sensorY[]={0,1,0,-1};
 int mov[]={180,270,0,90};
 int botones[]={8,44,53};
 int leds[]={9,10,11};
+int periodo = 1000;
+unsigned long TiempoAhora = 0;
+unsigned long tiempo = 0;
 unsigned long tiempo1, tiempo2;
 double magn;
 double targetRotation=0.0;
 double Set=0.0;
+float a, b, c, valor;
 bool im;
 bool sensor[4];
 
@@ -159,14 +163,14 @@ void setup() {
   myIMU.begin();
   myIMU.enableRotationVector(50);
   myIMU.enableMagnetometer(50);
-  targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
-  tiempo1 = millis();
-  while(millis()<1000){
+  while(millis()<600){
+    targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
     Set=getRawRotation()+(targetRotation-mag());
     delay(20);
   }  
   IR.sensorInitialization();
   analogReadResolution(12);
+  tiempo1 = millis();
   pixels.begin();
   pixel.begin();
   pixe.begin();  
@@ -178,9 +182,8 @@ void setup() {
     pix.setPixelColor(i, pixels.Color(0, 50, 50));
     pix.show();    
     pixe.show();
-    pixels.show();
     pixel.show(); 
-    pixe.show();  
+    pixels.show();
   }
   for(int i =0; i<3; i++)
     pinMode(leds[i],HIGH);
@@ -191,13 +194,8 @@ void setup() {
   us3.begin(); 
   delay(20);
 }
-int periodo = 1000;
-unsigned long TiempoAhora = 0;
-unsigned long tiempo = 0;
-float a, b,c,valor;
 void loop() {
   tiempo2 = millis();
-  
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
@@ -211,7 +209,6 @@ void loop() {
   int sl=angulo();
   double imu=error(erro);
   valor=(imu/180.00*255);
-     
   if(sl==-1){ 
     if(angle<=360){
       if(angle<=335&&angle>=10){
@@ -227,25 +224,20 @@ void loop() {
       else{ 
         if(angle>=350||angle<=5&&intensidad>=160){
           vel=175;
-       
           int derecha=us2.VCM();
           if(derecha<75){
             imu=imu+40;
-            Serial.println("Izquierda");
           }
           if(derecha>=75){
             imu=imu-40;
-            Serial.println("Derecha");
           }
         }
         valor=(imu/180.00*255);
-     
-          angle=0;
+        angle=0;
       }
-     
-     a=cos((angle-(30))*M_PI/180)*vel;
-     b=cos((angle-90)*M_PI/180)*vel;
-     c=-cos((angle+30)*M_PI/180)*vel; 
+      a=cos((angle-(30))*M_PI/180)*vel;
+      b=cos((angle-90)*M_PI/180)*vel;
+      c=-cos((angle+30)*M_PI/180)*vel; 
     }
     else {
       int x=us3.VCM();  //atras
@@ -265,13 +257,11 @@ void loop() {
           a=cos((270-(30))*M_PI/180)*100;
           b=cos((270-90)*M_PI/180)*100;
           c=-cos((270+30)*M_PI/180)*100; 
-          //digitalWrite(11,HIGH);
         }
         else if(y<-10){
-        a=cos((90-(30))*M_PI/180)*100;
+          a=cos((90-(30))*M_PI/180)*100;
           b=cos((90-90)*M_PI/180)*100;
           c=-cos((90+30)*M_PI/180)*100; 
-          //digitalWrite(10,HIGH);
         }
         else if(x>0&&y>=-5&&y<=5){  
           a=cos((180-(30))*M_PI/180)*100;
@@ -283,49 +273,39 @@ void loop() {
           a=0;
           b=0;
           c=0;
-        }
-        
-    }
+        }  
+      }
     }
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
     digitalWrite(10,LOW);
     digitalWrite(11,LOW);
-    
   }
   else{  
     mot.off();
     angle=sl;
-    
-        while (millis() < tiempo2 + 250){}
-        
-        valor=(imu/180.00*225);
-          
-        a=cos((angle-(30))*M_PI/180)*100;
-        b=cos((angle-90)*M_PI/180)*100;
-        c=-cos((angle+30)*M_PI/180)*100; 
-        mot.set(valor-a,1);
-        mot.set(valor+b,2);
-        mot.set(valor-c,3);
-
-    
+    while (millis() < tiempo2 + 250){}    
+    valor=(imu/180.00*225);      
+    a=cos((angle-(30))*M_PI/180)*100;
+    b=cos((angle-90)*M_PI/180)*100;
+    c=-cos((angle+30)*M_PI/180)*100; 
+    mot.set(valor-a,1);
+    mot.set(valor+b,2);
+    mot.set(valor-c,3);
     while (millis() < tiempo2 + 500){}
-        mot.off();
-    
+    mot.off();
   }
   if(imu>=-5&&imu<=5)
     digitalWrite(9,HIGH);
   else
     digitalWrite(9,LOW);  
- 
   if(!digitalRead(8)==1){
+    mot.off();
     magn=mag();
     magn > 0 ? magn=magn : magn=360.00+magn;
     escribir(magn);   
     Set=getRawRotation();
-    mot.off();
   }  
-  Serial.println(intensidad);
   delay(20);
 }

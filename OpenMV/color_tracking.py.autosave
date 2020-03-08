@@ -130,8 +130,8 @@ while(True):
 
         estado=1
         led.on()
-        if angle < 0:
-            angle=360+angle
+        
+        print(angle)
 
     if estado==1:
         uart.writechar(int(angle))
