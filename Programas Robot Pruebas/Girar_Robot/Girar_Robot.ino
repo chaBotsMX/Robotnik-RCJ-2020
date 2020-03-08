@@ -1,14 +1,15 @@
 #include <Wire.h>
 #include <DueFlashStorage.h>
 #include "IRLocator360.h"
+#include "UltrasonicoLib.h"
 #include "Motor.h"
 #include "SparkFun_BNO080_Arduino_Library.h"
 #define in 140
 #define inn 19600
 //3537
-int ina[]={0,14,35,30};
-int inb[]={0,3,37,32};
-int pwm[]={0,8,7,6};  
+int ina[]={0,36,40,49};
+int inb[]={0,38,42,23};
+int pwm[]={0,13,12,2};  
 int vel=125;
 
 const int magx = -99;
@@ -17,7 +18,7 @@ const int magy = -134;
 Motor mot(ina,inb,pwm,255,255);
 IRLocator360 IR;
 DueFlashStorage dueFlashStorage;
-
+Ultrasonico us2(6,5);
 double targetRotation=0.0;
 double Set=0.0;
 BNO080 myIMU;
@@ -84,8 +85,10 @@ double escribir(int alineacion){
 
 double magn;
 bool im;
+int camara=0;
 void setup() {
   Serial.begin(19200);  
+  Serial3.begin(19200);
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
@@ -97,10 +100,7 @@ void setup() {
   }  
   IR.sensorInitialization();
   pinMode(9,OUTPUT);
-  pinMode(5,OUTPUT);
-  pinMode(52,INPUT_PULLUP);
-  pinMode(2,INPUT_PULLUP);
-  pinMode(13,INPUT_PULLUP);
+  pinMode(8,INPUT_PULLUP);
   delay(20);
 }
 
@@ -109,6 +109,11 @@ int vela=255;
 float a,b,c;
 
 void loop() {
+  if (Serial3.available() > 0) {
+    camara = Serial3.read();
+    camara=camara-120; 
+    Serial.println(camara);
+  }
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
   bool x;
@@ -119,42 +124,22 @@ void loop() {
   
   double imu=error(erro);
   
-  if(angle>=340||angle<=10){    
-    imu=imu+10;
+    /*imu=imu+10;
     vela=200;
-    angle=0;
-    a=cos((angle-(30))*M_PI/180)*vel;
-    b=cos((angle+30)*M_PI/180)*vel;
-    c=-cos((angle-90)*M_PI/180)*vel;    
-    digitalWrite(5,LOW);
-  }
-  else{
-    a=0;
-    b=0;
-    c=0;
-    vela=255;
-    digitalWrite(5,HIGH);
-  }
-
-  float valor=(imu/alin*vela);
-  mot.set(valor-a,1);
-  mot.set(valor+b,2);
-  mot.set(valor-c,3);
-    
+    angle=0;*/
+  mot.alineacion(imu);  
   if(imu>=-5&&imu<=5)
     digitalWrite(9,HIGH);
   else
     digitalWrite(9,LOW);
 
-  if(!digitalRead(52)==1){
+  if(!digitalRead(8)==1){
     magn=mag();
     magn > 0 ? magn=magn : magn=360.00+magn;
     escribir(magn);
     Set=getRawRotation();
     mot.off();
   }  
-  if(!digitalRead(2)==1){
-    myIMU.softReset();  
-  }
+  
   delay(20);
 }

@@ -17,7 +17,7 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time = 500)
 #sensor.set_auto_gain(False,gain_db_ceiling = 10.880774) # must be turned off for color tracking
 #sensor.set_auto_gain(False) # must be turned off for color tracking
-sensor.set_auto_whitebal(False,  (-0.06828868, -6.02073, -5.119987)) # must be turned off for color tracking
+sensor.set_auto_whitebal(False, (-0.8559153, -6.02073, -3.254616)) # must be turned off for color tracking
 clock = time.clock()
 led = pyb.LED(3)
 led2 = pyb.LED(2)
@@ -29,8 +29,8 @@ rsc = [((320//8)*4)-((50//2)), ((240//24))-((20//2)), 50, 20] #centro
 
 #print("Auto algorithms done. Hold the object you want to track in front of the camera in the box.")
 #print("MAKE SURE THE COLOR OF THE OBJECT YOU WANT TO TRACK IS FULLY ENCLOSED BY THE BOX!")
-"""
-for i in range(30):
+
+for i in range(50):
     img = sensor.snapshot()
     img.draw_rectangle(rsc)
 
@@ -38,7 +38,8 @@ for i in range(30):
 
 threshold = [50, 50, 0, 0, 0, 0] # Middle L, A, B values.
 #centro
-for i in range(30):
+""""
+for i in range(50):
     img = sensor.snapshot()
     hist = img.get_histogram(roi=rsc)
     lo = hist.get_percentile(0.01) # Get the CDF of the histogram at the 1% range (ADJUST AS NECESSARY)!
@@ -109,12 +110,12 @@ for i in range(30):
 
 led2.on()
 time.sleep(100)
-led2.off()"""
-
+led2.off()
+"""
 #print("Thresholds learned...")
 #print("Tracking colors...")
 
-threshold = [57, 61, 52, 58, 66, 70]
+threshold = [45, 93, -8, 52, -1, 51]
 print(threshold)
 while(True):
     estado=0
@@ -130,11 +131,11 @@ while(True):
 
         estado=1
         led.on()
-        if angle < 0:
-            angle=360+angle
+
+        print(angle)
 
     if estado==1:
-        uart.writechar(int(angle))
+        uart.writechar(int(angle+120))
     else:
         uart.writechar(-1)
 
