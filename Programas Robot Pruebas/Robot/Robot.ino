@@ -265,18 +265,19 @@ void loop() {
           a=cos((270-(30))*M_PI/180)*100;
           b=cos((270-90)*M_PI/180)*100;
           c=-cos((270+30)*M_PI/180)*100; 
-          digitalWrite(11,HIGH);
+          //digitalWrite(11,HIGH);
         }
         else if(y<-10){
         a=cos((90-(30))*M_PI/180)*100;
           b=cos((90-90)*M_PI/180)*100;
           c=-cos((90+30)*M_PI/180)*100; 
-          digitalWrite(10,HIGH);
+          //digitalWrite(10,HIGH);
         }
-        else if(x>0&&y>=-5||y<=5){  
+        else if(x>0&&y>=-5&&y<=5){  
           a=cos((180-(30))*M_PI/180)*100;
           b=cos((180-90)*M_PI/180)*100;
           c=-cos((180+30)*M_PI/180)*100; 
+          digitalWrite(11,HIGH);
         }
         else {
           a=0;
