@@ -29,6 +29,7 @@ int mov[]={180,270,0,90};
 int botones[]={8,44,53};
 int leds[]={9,10,11};
 int periodo = 1000;
+int camara;
 unsigned long TiempoAhora = 0;
 unsigned long tiempo = 0;
 unsigned long tiempo1, tiempo2;
@@ -159,6 +160,7 @@ bool isLine(int a, int b){
 
 void setup() {
   Serial.begin(19200);
+  Serial3.begin(19200);
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
@@ -195,6 +197,11 @@ void setup() {
   delay(20);
 }
 void loop() {
+  /*if (Serial3.available() > 0) {
+    camara = Serial3.read();
+    camara=camara-120; 
+    Serial.println(camara);
+  }*/
   tiempo2 = millis();
   int intensidad=IR.signalStrength1200hz();
   int angle=IR.angleDirection600hz();  
@@ -231,6 +238,19 @@ void loop() {
           if(derecha>=75){
             imu=imu-40;
           }
+          /*if(camara!=135){  
+            if(camara<=-5&&camara>=5)
+              imu=imu+camara;
+          }
+          else{
+             int derecha=us2.VCM();
+          if(derecha<75){
+            imu=imu+40;
+          }
+          if(derecha>=75){
+            imu=imu-40;
+          }*/
+          
         }
         valor=(imu/180.00*255);
         angle=0;
@@ -274,13 +294,15 @@ void loop() {
           b=0;
           c=0;
         }  
-      }
-    }
+      }      
+    }  
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
     digitalWrite(10,LOW);
     digitalWrite(11,LOW);
+  
+
   }
   else{  
     mot.off();
