@@ -26,6 +26,8 @@ int ports[]={A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 int sensorX[]={1,0,-1,0};
 int sensorY[]={0,1,0,-1};
 int mov[]={180,270,0,90};
+int botones[]={8,44,53};
+int leds[]={9,10,11};
 unsigned long tiempo1, tiempo2;
 double magn;
 double targetRotation=0.0;
@@ -41,7 +43,9 @@ DueFlashStorage dueFlashStorage;
 Motor mot(ina,inb,pwm,225,225);
 IRLocator360 IR;
 BNO080 myIMU;
-Ultrasonico br(6,5);
+Ultrasonico us1(4,3);
+Ultrasonico us2(6,5);
+Ultrasonico us3(19,18);
 
 double getFilter(double rot){
   double rt=rot;
@@ -156,6 +160,7 @@ void setup() {
   myIMU.enableRotationVector(50);
   myIMU.enableMagnetometer(50);
   targetRotation=dueFlashStorage.read(3)+dueFlashStorage.read(4)*255;
+  tiempo1 = millis();
   while(millis()<1000){
     Set=getRawRotation()+(targetRotation-mag());
     delay(20);
@@ -164,7 +169,8 @@ void setup() {
   analogReadResolution(12);
   pixels.begin();
   pixel.begin();
-  pixe.begin();  pix.begin();
+  pixe.begin();  
+  pix.begin();
   for(int i=0; i<NUMPIXELS; i++) { //GRB
     pixels.setPixelColor(i, pixels.Color(0, 50, 50));
     pixel.setPixelColor(i, pixels.Color(0, 50, 50));
@@ -176,12 +182,13 @@ void setup() {
     pixel.show(); 
     pixe.show();  
   }
-  tiempo1 = millis();
-  pinMode(9,OUTPUT);
-  pinMode(10,OUTPUT);
-  pinMode(11,OUTPUT);
-  pinMode(8,INPUT_PULLUP);
-  br.PAU();
+  for(int i =0; i<3; i++)
+    pinMode(leds[i],HIGH);
+  for(int i =0; i<3; i++)
+    pinMode(botones[i],INPUT_PULLUP);
+  us1.begin();
+  us2.begin();
+  us3.begin(); 
   delay(20);
 }
 int periodo = 1000;
@@ -218,15 +225,15 @@ void loop() {
          angle=180.00+(180.00-angle-d);
       } 
       else{ 
-        if(angle>=355||angle<=5&&intensidad>=160){
+        if(angle>=350||angle<=5&&intensidad>=160){
           vel=175;
        
-          int us1=br.VCM();
-          if(us1<75){
+          int derecha=us2.VCM();
+          if(derecha<75){
             imu=imu+40;
             Serial.println("Izquierda");
           }
-          if(us1>=75){
+          if(derecha>=75){
             imu=imu-40;
             Serial.println("Derecha");
           }
@@ -241,15 +248,50 @@ void loop() {
      c=-cos((angle+30)*M_PI/180)*vel; 
     }
     else {
-      a=0;
-      b=0;
-      c=0;    
+      int x=us3.VCM();  //atras
+      int y=us2.VCM(); //lado
+      y > 60 ? x=x-50: x=x-75;
+      y > 60 ? y=92-y: y=60-y;
+      if(x>10){
+        double h=sqrt((x*x)+(y*y));
+        double angulo=asin((y/h))*180.00/M_PI;
+        angulo=angulo+180;
+        a=cos((angulo-(30))*M_PI/180)*100;
+        b=cos((angulo-90)*M_PI/180)*100;
+        c=-cos((angulo+30)*M_PI/180)*100; 
+      }
+      else{
+        if(y>=10){
+          a=cos((270-(30))*M_PI/180)*100;
+          b=cos((270-90)*M_PI/180)*100;
+          c=-cos((270+30)*M_PI/180)*100; 
+          digitalWrite(11,HIGH);
+        }
+        else if(y<-10){
+        a=cos((90-(30))*M_PI/180)*100;
+          b=cos((90-90)*M_PI/180)*100;
+          c=-cos((90+30)*M_PI/180)*100; 
+          digitalWrite(10,HIGH);
+        }
+        else if(x>0&&y>=-5||y<=5){  
+          a=cos((180-(30))*M_PI/180)*100;
+          b=cos((180-90)*M_PI/180)*100;
+          c=-cos((180+30)*M_PI/180)*100; 
+        }
+        else {
+          a=0;
+          b=0;
+          c=0;
+        }
+        
+    }
     }
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
     digitalWrite(10,LOW);
     digitalWrite(11,LOW);
+    
   }
   else{  
     mot.off();
@@ -266,11 +308,9 @@ void loop() {
         mot.set(valor+b,2);
         mot.set(valor-c,3);
 
-      digitalWrite(11,HIGH); 
     
     while (millis() < tiempo2 + 500){}
         mot.off();
-        digitalWrite(10,HIGH);
     
   }
   if(imu>=-5&&imu<=5)

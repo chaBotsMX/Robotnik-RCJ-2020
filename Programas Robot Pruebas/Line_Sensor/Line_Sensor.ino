@@ -56,14 +56,14 @@ void setup() {
   pix.begin();
   for(int i=0; i<NUMPIXELS; i++) { //GRB
     pixels.setPixelColor(i, pixels.Color(0, 50, 50));
-    pixel.setPixelColor(i, pixels.Color(0, 50, 50));
-    pixe.setPixelColor(i, pixels.Color(0, 50, 50));    
-    pix.setPixelColor(i, pixels.Color(0, 50, 50));
+    pixel.setPixelColor(i, pixel.Color(0, 50, 50));
+    pixe.setPixelColor(i, pixe.Color(0, 50, 50));    
+    pix.setPixelColor(i, pix.Color(0, 50, 50));
     pix.show();    
     pixe.show();
     pixels.show();
     pixel.show(); 
-    pixe.show();  
+     
   }
   pinMode(9,OUTPUT);
   pinMode(10,OUTPUT);

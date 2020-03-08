@@ -3,7 +3,7 @@ struct Ultrasonico{
     byte port[2];
 
   public:
-    void PAU(){
+    void begin(){
       pinMode(port[1], INPUT);
       pinMode(port[0], OUTPUT);
       digitalWrite(port[1], LOW);//Inicializamos el pin con 0
