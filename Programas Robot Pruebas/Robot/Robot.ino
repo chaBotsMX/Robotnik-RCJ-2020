@@ -17,7 +17,7 @@
 #define NUMPIXELS 3 
 const int magx = -100;
 const int magy = -140;
-int vel=175;
+int vel=200;
 int contador=0;
 int ina[]={0,36,40,49};
 int inb[]={0,38,42,23};
@@ -218,7 +218,7 @@ void loop() {
   sensor[3]=isLine(0,2);
   int sl=angulo();
   double imu=error(erro);
-  valor=(imu/180.00*255);
+  valor=(imu/180.00*350);
   if(sl==-1){ 
     if(angle<=360){
       if(angle<=335&&angle>=10){
@@ -232,7 +232,7 @@ void loop() {
          angle=180.00+(180.00-angle-d);
       } 
       else{ 
-        vel=200;
+        vel=225;
         if(angle>=350||angle<=10&&intensidad>=150){
           vel=175;
           y=us2.VCM(); //izquierda
@@ -250,7 +250,7 @@ void loop() {
               imu=imu-40;
             }
         }
-        valor=(imu/180.00*255);
+        valor=(imu/180.00*350);
         angle=0;
       }
       }
@@ -333,13 +333,13 @@ void loop() {
     Serial.println("AAAAA");
     mot.off();
     angle=sl;
-    while (millis() < tiempo2 + 250){}    
-    valor=(imu/180.00*255);    
-    setABC(angle, 150);  
+    while (millis() < tiempo2 + 500){}    
+    valor=(imu/180.00*350);    
+    setABC(angle, 200);  
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
-    while (millis() < tiempo2 + 500){}
+    while (millis() < tiempo2 + 750){}
     mot.off();
   }
   if(imu>=-5&&imu<=5)
