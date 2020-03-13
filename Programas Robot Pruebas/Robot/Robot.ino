@@ -30,6 +30,7 @@ int botones[]={8,44,53};
 int leds[]={9,10,11};
 int periodo = 1000;
 int camara;
+int atras, y, z;
 unsigned long TiempoAhora = 0;
 unsigned long tiempo = 0;
 unsigned long tiempo1, tiempo2;
@@ -218,7 +219,6 @@ void loop() {
   int sl=angulo();
   double imu=error(erro);
   valor=(imu/180.00*255);
-
   if(sl==-1){ 
     if(angle<=360){
       if(angle<=335&&angle>=10){
@@ -233,42 +233,41 @@ void loop() {
       } 
       else{ 
         vel=200;
-        
-        
-        if(angle>=350||angle<=5&&intensidad>=130){
+        if(angle>=350||angle<=10&&intensidad>=150){
           vel=175;
-          int y=us2.VCM(); //izquierda
-          int z=us1.VCM(); //derecha
+          y=us2.VCM(); //izquierda
+          z=us1.VCM(); //derecha
           if(z<70||y<70){
-          lado = y > z ? 1 : 0;
-          if(lado){
-            imu=0;
-            imu=imu+20;
-            Serial.println("DERECHA");
-          }
-          else{
-            Serial.println("IZQUIERDA");
-            imu=0;
-            imu=imu-20;
-          }
+            lado = y > z ? 1 : 0;
+            if(lado){
+              imu=0;
+              imu=imu+40;
+              Serial.println("IZQUIERDA");
+            }
+            else{ 
+              Serial.println("DERECHA");
+              imu=0;
+              imu=imu-40;
+            }
         }
         valor=(imu/180.00*255);
         angle=0;
+      }
       }
       Serial.println(angle);
       a=cos((angle-(30))*M_PI/180)*vel;
       b=cos((angle-90)*M_PI/180)*vel;
       c=-cos((angle+30)*M_PI/180)*vel; 
-    }
+      
     }
     else {
-      int x=us3.VCM();  //atras
-      int y=us2.VCM(); //izquierda
-      int z=us1.VCM(); //derecha
+      atras=us3.VCM();  //atras
+      y=us2.VCM(); //izquierda
+      z=us1.VCM(); //derecha
       
       lado = y >= z ? 1 : 0;
       
-      Serial.print(x);
+      Serial.print(atras);
       Serial.print("\t"); 
       Serial.print(y);
       Serial.print("\t"); 
@@ -278,14 +277,14 @@ void loop() {
       if(lado){
         if(z <=55){
           z=60-z;
-          x=x-60;
+          atras=atras-60;
         } 
         else{
           z=92-z;
-          x=x-40;
+          atras=atras-40;
         }
-        if(x>=5){  
-            h=sqrt((x*x)+(z*z));
+        if(atras>=5){  
+            h=sqrt((atras*atras)+(z*z));
             reg=asin((z/h))*180.00/M_PI;
             reg=reg+180;
             setABC(reg,100);
@@ -297,56 +296,46 @@ void loop() {
           b=0;
           c=0;
           
-      }      
+          }      
       }         
        
       
       else{
         if(y <=55){
-          x=x-60;
+          atras=atras-60;
           y=60-y;
           
         }else{
           y=92-y;
-          x=x-40;
+          atras=atras-40;
         }
-        if(x>=5){  
-            h=sqrt((x*x)+(y*y));
+        if(atras>=5){  
+            h=sqrt((atras*atras)+(y*y));
             reg=asin((y/h))*180.00/M_PI;
             reg=180-reg;
             setABC(reg,100);
-            Serial.println(reg);
-            digitalWrite(11,HIGH);
-       
           }
        else{
-        
           a=0;
           b=0;
           c=0;
-          
-      }       //  Serial.print("IZQUIERDAAAAAAAAAA");
-      Serial.print("\t"); 
-      
+      }       //  Serial.print("IZQUIERDAAAAAAAAAA");      
       }
             
-    Serial.println();      
+      Serial.println();      
       digitalWrite(10,HIGH);
     }  
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
-  
-  
   }
   else{  
+    Serial.println("AAAAA");
     mot.off();
     angle=sl;
     while (millis() < tiempo2 + 250){}    
-    valor=(imu/180.00*255);      
-    a=cos((angle-(30))*M_PI/180)*150;
-    b=cos((angle-90)*M_PI/180)*150;
-    c=-cos((angle+30)*M_PI/180)*150; 
+    valor=(imu/180.00*255);    
+    setABC(angle, 150);  
     mot.set(valor-a,1);
     mot.set(valor+b,2);
     mot.set(valor-c,3);
