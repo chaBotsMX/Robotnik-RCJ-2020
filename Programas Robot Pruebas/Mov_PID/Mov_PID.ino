@@ -10,6 +10,9 @@
 #define in 140
 #define inn 19600
 #define umbral 3000
+float kp=0.4;
+#define ki 0
+#define kd 0
 #define PIN 48
 #define PIN2 52
 #define PIN3 50
@@ -17,8 +20,7 @@
 #define NUMPIXELS 3 
 const int magx = -100;
 const int magy = -140;
-float kp=0.4;
-int vel=175;
+float vel=0.2;
 int contador=0;
 int ina[]={0,36,40,49};
 int inb[]={0,38,42,23};
@@ -163,7 +165,6 @@ bool isLine(int a, int b){
 
 void setup() {
   Serial.begin(19200);
-  Serial3.begin(19200);
   Wire.begin();
   myIMU.begin();
   myIMU.enableRotationVector(50);
@@ -190,22 +191,20 @@ void setup() {
     pixel.show(); 
     pixels.show();
   }
-  for(int i =0; i<3; i++)
+  for(int i=0; i<3; i++){
     pinMode(leds[i],OUTPUT);
-  for(int i=0; i<3; i++)
     pinMode(botones[i],INPUT_PULLUP);
+  }
   us1.begin();
   us2.begin();
   us3.begin(); 
   delay(20);
 }
-
 void setABC(double g, float pwm, double power){
   a=cos((power+g-(30))*M_PI/180)*pwm;
   b=cos((power+g-90)*M_PI/180)*pwm;
   c=-cos((power+g+30)*M_PI/180)*pwm;
 }
-
 void loop() {
   magn=mag();
   tiempo2 = millis();
@@ -221,121 +220,28 @@ void loop() {
   sensor[3]=isLine(0,2);
   int sl=angulo();
   double imu=error(erro);
-  valor=(imu/180.00*255);
+  valor=(imu/180.00*350);
   double error=0-imu;
   double power=error;
-  if(sl==-1){ 
-    if(angle<=360){
-      if(angle<=335&&angle>=10){
-        angle>=180 ? x=1 : x=0; 
-        angle>=180 ? angle=360.00-angle : angle=angle;
-        double t=sqrt(((intensidad*intensidad)+(inn))-2*(intensidad*in)*cos(angle*M_PI/180.00));
-        double d=asin(((intensidad*sin(angle*M_PI/180.00))/t))*180.00/M_PI;
-        if(!x)
-          angle=180.00-(180.00-angle-d);
-        else
-         angle=180.00+(180.00-angle-d);
-      } 
-      else{ 
-        vel=150;
-        if(angle>=350||angle<=10&&intensidad>=150){
-          y=us2.VCM(); //izquierda
-          z=us1.VCM(); //derecha
-          if(z<70||y<70){
-            lado = y > z ? 1 : 0;
-            if(lado){
-              imu=0;
-              imu=imu+40;
-              Serial.println("IZQUIERDA");
-            }
-            else{ 
-              Serial.println("DERECHA");
-              imu=0;
-              imu=imu-40;
-            }
-        }
-        valor=(imu/180.00*255);
-        angle=0;
-      }
-      }
-      Serial.println(angle);
-      setABC(angle,vel,power*kp);
-    }
-    else {
-      if(imu>=-10&&imu<=10){
-        atras=us3.VCM();  //atras
-        y=us2.VCM(); //izquierda
-        z=us1.VCM(); //derecha
-      
-        lado = y >= z ? 1 : 0;
-        
-        if(lado){
-          if(z <=55){
-            z=60-z;
-            atras=atras-60;
-          } 
-          else{
-            z=92-z;
-            atras=atras-40;
-          }
-          if(atras>=5){  
-              h=sqrt((atras*atras)+(z*z));
-              reg=asin((z/h))*180.00/M_PI;
-              reg=reg+180;
-              setABC(reg,100,power*kp);
-            }
-            else{
-              a=0;
-              b=0;
-              c=0;
-            }      
-        }            
-        else{
-          if(y <=55){
-            atras=atras-60;
-            y=60-y;
-          }else{
-            y=92-y;
-            atras=atras-40;
-          }
-          if(atras>=5){  
-              h=sqrt((atras*atras)+(y*y));
-              reg=asin((y/h))*180.00/M_PI;
-              reg=180-reg;
-              setABC(reg,100,power*kp);
-            }
-          else{
-            a=0;
-            b=0;
-            c=0;
-          }             
-        }        
-      }
-      else{
-        mot.alineacion(imu);    
-      }
-    }
-    mot.set(valor-a,1);
-    mot.set(valor+b,2);
-    mot.set(valor-c,3);
-  }
-  else{  
-    mot.off();
-    angle=sl;
-    while (millis() < tiempo2 + 250){}    
-    valor=(imu/180.00*255);    
-    setABC(angle, 100, power*kp);  
-    mot.set(valor-a,1);
-    mot.set(valor+b,2);
-    mot.set(valor-c,3);
-    while (millis() < tiempo2 + 500){}
-    mot.off();
-  }  
+  setABC(0, 200, power*kp);
+  mot.set(valor-a,1);
+  mot.set(valor+b,2);
+  mot.set(valor-c,3);
+  Serial.print(valor-a);
+  Serial.print("\t");
+  Serial.print(valor+b);
+  Serial.print("\t");
+  Serial.print(valor-c);
+  Serial.print("\t");
+  Serial.println(power*vel);
+  if(imu>=-5&&imu<=5)
+    digitalWrite(9,HIGH);
+  else
+    digitalWrite(9,LOW);  
   if(!digitalRead(8)==1){
     mot.off();  
     magn > 0 ? magn=magn : magn=360.00+magn;
     escribir(magn);   
     Set=getRawRotation();
   }  
-  digitalWrite(10,LOW);
 }
