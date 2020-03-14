@@ -90,19 +90,13 @@ double mag(){
 }
 
 double getRotation(){
-  // Leer la rotacion en cuanto al Norte Magnetico del IMU
   double rot=0;
   Set < 0 ? rot=360.00+Set : rot = Set;
-  // Obtener la rotacion relativa al frente inicial (rotacion "0")
   double rt=rot+getRawRotation();
-  // Condiciones para asegurarnos de que el valor de rotacion
-  // regresado (como resultado) por la funcion sea valido 
-  // (entre 0 y 360).
   if(rt<0)
     rt+=360;
   if(rt>360)
     rt-=360;
-  // Regresar la rotacion actual del robot
   return rt;
 }
 
