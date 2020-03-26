@@ -240,31 +240,26 @@ void loop() {
             if(lado){
               imu=0;
               imu=imu+40;
-              Serial.println("IZQUIERDA");
             }
             else{ 
-              Serial.println("DERECHA");
               imu=0;
               imu=imu-40;
             }
         }
         valor=(imu/180.00*255);
         angle=0;
-      }
+       }
       }
       Serial.println(angle);
       setABC(angle,vel,power*kp);
     }
     else {
-      if(imu>=-10&&imu<=10){
         atras=us3.VCM();  //atras
         y=us2.VCM(); //izquierda
         z=us1.VCM(); //derecha
-      
         lado = y >= z ? 1 : 0;
-        
         if(lado){
-          if(z <=55){
+          if(z<=55){
             z=60-z;
             atras=atras-60;
           } 
@@ -285,7 +280,7 @@ void loop() {
             }      
         }            
         else{
-          if(y <=55){
+          if(y<=55){
             atras=atras-60;
             y=60-y;
           }else{
@@ -304,10 +299,6 @@ void loop() {
             c=0;
           }             
         }        
-      }
-      else{
-        mot.alineacion(imu);    
-      }
     }
     mot.set(valor-a,1);
     mot.set(valor+b,2);

@@ -3,8 +3,8 @@ long timeLimit=833;
 int count=0;
 void setup() {
   Serial.begin(115200);
-    pinMode(7,INPUT);
-    pinMode(13,OUTPUT);
+  pinMode(7,INPUT);
+  pinMode(13,OUTPUT);
   readLimit=millis()+50;
 }
 
