@@ -14,9 +14,9 @@ Direcciones de datos I2C
   0x01 Manufacturer Code
   0x02 Sensor ID Code
   0x03 Not Used
-  0x04 1200 Hz Heading in 5ï¿½ increments
+  0x04 1200 Hz Heading in 5° increments
   0x05 1200 Hz Signal Strength
-  0x06 600 Hz Heading in 5ï¿½ increments
+  0x06 600 Hz Heading in 5° increments
   0x07 600 Hz Signal Strength
 Direccion I2C Arduino 7-Bit
   0x0E

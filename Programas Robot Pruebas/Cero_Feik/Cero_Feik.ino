@@ -6,8 +6,8 @@ int ina[]={0,3,35,30};
 int inb[]={0,14,37,32};
 int pwm[]={0,8,7,6};
 
-const int magx = -99;
-const int magy = -134;
+const int magx = 17;
+const int magy = 14;
 
 double targetRotation=0.0;
 BNO080 myIMU;
